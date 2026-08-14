@@ -7466,7 +7466,234 @@ class GasExchangeApp:
             messagebox.showerror("Error", "No files were processed successfully")
 
         progress_window.destroy()
+      
 
+    def copy_treeview_selection(self, treeview):
+        """Copy selected rows from a Treeview to clipboard"""
+        try:
+            # Get selected items
+            selected_items = treeview.selection()
+            if not selected_items:
+                if hasattr(self, 'slider_info_label'):
+                    self.slider_info_label.config(
+                        text="No rows selected to copy", 
+                        foreground="orange"
+                    )
+                    self.root.after(2000, lambda: 
+                        self.slider_info_label.config(
+                            text="Enter values, then click 'Apply Changes'", 
+                            foreground="blue"
+                        ) if hasattr(self, 'slider_info_label') else None
+                    )
+                return
+        
+            # Get column headings
+            columns = treeview['columns']
+            if not columns:
+                columns = ['']  # In case columns is empty
+        
+            # Build header row
+            headers = []
+            for col in columns:
+                heading_text = treeview.heading(col, 'text')
+                headers.append(heading_text)
+        
+            # Collect data from selected rows
+            data_rows = []
+            for item in selected_items:
+                values = treeview.item(item, 'values')
+                # Convert None to empty string
+                str_values = [str(v) if v is not None else '' for v in values]
+                data_rows.append(str_values)
+        
+            # Format as tab-separated text
+            lines = []
+            if headers:
+                lines.append('\t'.join(headers))
+            for row in data_rows:
+                lines.append('\t'.join(row))
+        
+            text_to_copy = '\n'.join(lines)
+        
+            # Copy to clipboard
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text_to_copy)
+            self.root.update()
+        
+            # Show success message
+            if hasattr(self, 'slider_info_label'):
+                self.slider_info_label.config(
+                    text=f"✓ Copied {len(selected_items)} row(s) to clipboard", 
+                    foreground="green"
+                )
+                self.root.after(2000, lambda: 
+                    self.slider_info_label.config(
+                        text="Enter values, then click 'Apply Changes'", 
+                        foreground="blue"
+                    ) if hasattr(self, 'slider_info_label') else None
+                )
+        
+            # Also print to console for debugging
+            print(f"Copied {len(selected_items)} rows from treeview")
+            
+        except Exception as e:
+            print(f"Error copying from treeview: {e}")
+            traceback.print_exc()
+            if hasattr(self, 'slider_info_label'):
+                self.slider_info_label.config(
+                    text=f"Error copying: {str(e)[:50]}", 
+                    foreground="red"
+                )
+
+    def setup_treeview_copy_menu(self, treeview):
+        """Add right-click context menu and keyboard shortcuts for Treeview copying"""
+        # Create context menu
+        menu = tk.Menu(treeview, tearoff=0)
+        menu.add_command(label="Copy Selected Row(s)", command=lambda: self.copy_treeview_selection(treeview))
+        menu.add_separator()
+        menu.add_command(label="Select All", command=lambda: treeview.selection_set(treeview.get_children()))
+        menu.add_command(label="Copy All", command=lambda: self.copy_treeview_all(treeview))
+    
+        # Variable to track if menu is active
+        menu.active = False
+    
+        def show_menu(event):
+            # Unpost any existing menu first
+            try:
+                menu.unpost()
+            except:
+                pass
+            # Show the menu
+            try:
+                menu.tk_popup(event.x_root, event.y_root)
+                menu.active = True
+            finally:
+                menu.grab_release()
+    
+        def dismiss_menu(event):
+            """Dismiss the menu on left click"""
+            try:
+                if menu.active:
+                    menu.unpost()
+                    menu.active = False
+            except:
+                pass
+    
+        # Bind right-click to show menu
+        treeview.bind("<Button-3>", show_menu)
+        # Bind left-click to dismiss menu
+        treeview.bind("<Button-1>", dismiss_menu)
+        # Also bind to the root window to catch clicks outside the treeview
+        self.root.bind("<Button-1>", lambda e: self._dismiss_all_menus())
+    
+        # Keyboard shortcuts
+        treeview.bind("<Control-c>", lambda e: self.copy_treeview_selection(treeview))
+        treeview.bind("<Control-a>", lambda e: treeview.selection_set(treeview.get_children()))
+        treeview.bind("<Control-A>", lambda e: treeview.selection_set(treeview.get_children()))
+    
+        # Store menu reference
+        if not hasattr(self, '_treeview_menus'):
+            self._treeview_menus = []
+        self._treeview_menus.append(menu)
+    
+        return menu
+
+    def _dismiss_all_menus(self):
+        """Dismiss all active context menus"""
+        if hasattr(self, '_treeview_menus'):
+            for menu in self._treeview_menus:
+                try:
+                    if hasattr(menu, 'active') and menu.active:
+                        menu.unpost()
+                        menu.active = False
+                except:
+                    pass
+    
+        # Also dismiss any other menus
+        if hasattr(self, '_copy_menus'):
+            for menu in self._copy_menus:
+                try:
+                    if hasattr(menu, 'active') and menu.active:
+                        menu.unpost()
+                        menu.active = False
+                except:
+                    pass
+
+    def copy_treeview_all(self, treeview):
+        """Copy all rows from a Treeview to clipboard"""
+        try:
+            # Select all items first
+            all_items = treeview.get_children()
+            if not all_items:
+                if hasattr(self, 'slider_info_label'):
+                    self.slider_info_label.config(
+                        text="No rows to copy", 
+                        foreground="orange"
+                    )
+                return
+        
+            treeview.selection_set(all_items)
+            # Then copy the selection
+            self.copy_treeview_selection(treeview)
+        except Exception as e:
+            print(f"Error copying all rows: {e}")
+            traceback.print_exc()
+
+    def copy_treeview_as_excel(self, treeview):
+        """Copy selected rows as Excel-compatible format with proper headers"""
+        try:
+            selected_items = treeview.selection()
+            if not selected_items:
+                return
+        
+            # Get column headings
+            columns = treeview['columns']
+        
+            # Build header row with proper column names
+            headers = []
+            for col in columns:
+                heading_text = treeview.heading(col, 'text')
+                # Clean up heading text (remove units in parentheses for cleaner copy)
+                if ' (' in heading_text:
+                    heading_text = heading_text.split(' (')[0]
+                headers.append(heading_text)
+        
+            # Collect data
+            data_rows = []
+            for item in selected_items:
+                values = treeview.item(item, 'values')
+                str_values = [str(v) if v is not None else '' for v in values]
+                data_rows.append(str_values)
+        
+            # Format as tab-separated (Excel compatible)
+            lines = ['\t'.join(headers)]
+            for row in data_rows:
+                lines.append('\t'.join(row))
+        
+            text_to_copy = '\n'.join(lines)
+        
+            # Copy to clipboard
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text_to_copy)
+            self.root.update()
+        
+            # Show success message
+            if hasattr(self, 'slider_info_label'):
+                self.slider_info_label.config(
+                    text=f"✓ Copied {len(selected_items)} row(s) (Excel format)", 
+                    foreground="green"
+                )
+                self.root.after(2000, lambda: 
+                    self.slider_info_label.config(
+                        text="Enter values, then click 'Apply Changes'", 
+                        foreground="blue"
+                    ) if hasattr(self, 'slider_info_label') else None
+                )
+            
+        except Exception as e:
+            print(f"Error copying as Excel format: {e}")
+            traceback.print_exc()
+    
     def setup_anova_analysis_tab(self):
         """Setup the ANOVA + Tukey analysis tab in Batch Results"""
         # Create the tab
@@ -7579,6 +7806,9 @@ class GasExchangeApp:
     
         self.anova_results_text.config(yscrollcommand=text_v_scrollbar.set, 
                                        xscrollcommand=text_h_scrollbar.set)
+                                       
+        # Add context menu for copying text
+        self.setup_text_copy_menu(self.anova_results_text)
     
         # Grid layout for text widget and its scrollbars
         self.anova_results_text.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
@@ -7723,6 +7953,9 @@ class GasExchangeApp:
     
         self.llm_results_text.config(yscrollcommand=text_v_scrollbar.set, 
                                      xscrollcommand=text_h_scrollbar.set)
+
+        # Add context menu for copying text
+        self.setup_text_copy_menu(self.llm_results_text)
     
         # Grid layout for text widget and its scrollbars
         self.llm_results_text.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
@@ -8151,6 +8384,127 @@ class GasExchangeApp:
             traceback.print_exc()
             return None
 
+    
+    def setup_text_copy_menu(self, text_widget):
+        """Add right-click context menu and keyboard shortcuts for Text widget copying"""
+        # Create context menu
+        menu = tk.Menu(text_widget, tearoff=0)
+        menu.add_command(label="Copy", command=lambda: self.copy_text_selection(text_widget))
+        menu.add_separator()
+        menu.add_command(label="Select All", command=lambda: text_widget.tag_add("sel", "1.0", "end-1c"))
+        menu.add_command(label="Copy All", command=lambda: self.copy_text_all(text_widget))
+    
+        def show_menu(event):
+            try:
+                menu.tk_popup(event.x_root, event.y_root)
+            finally:
+                menu.grab_release()
+    
+        def dismiss_menu(event):
+            """Dismiss the menu on left click"""
+            try:
+                menu.unpost()
+            except:
+                pass
+    
+        # Bind right-click to show menu
+        text_widget.bind("<Button-3>", show_menu)
+        # Bind left-click to dismiss menu
+        text_widget.bind("<Button-1>", dismiss_menu)
+    
+        # Keyboard shortcuts
+        text_widget.bind("<Control-c>", lambda e: self.copy_text_selection(text_widget))
+        text_widget.bind("<Control-a>", lambda e: text_widget.tag_add("sel", "1.0", "end-1c"))
+        text_widget.bind("<Control-A>", lambda e: text_widget.tag_add("sel", "1.0", "end-1c"))
+    
+        # Store menu reference
+        if not hasattr(self, '_text_menus'):
+            self._text_menus = []
+        self._text_menus.append(menu)
+    
+        return menu
+
+    def copy_text_selection(self, text_widget):
+        """Copy selected text from a Text widget to clipboard"""
+        try:
+            # Try to get selected text
+            selected = text_widget.selection_get()
+            if selected:
+                self.root.clipboard_clear()
+                self.root.clipboard_append(selected)
+                self.root.update()
+            
+                # Show success message
+                if hasattr(self, 'slider_info_label'):
+                    self.slider_info_label.config(
+                        text="✓ Text copied to clipboard", 
+                        foreground="green"
+                    )
+                    self.root.after(2000, lambda: 
+                        self.slider_info_label.config(
+                            text="Enter values, then click 'Apply Changes'", 
+                            foreground="blue"
+                        ) if hasattr(self, 'slider_info_label') else None
+                    )
+            
+                return True
+            else:
+                # No text selected - show message
+                if hasattr(self, 'slider_info_label'):
+                    self.slider_info_label.config(
+                        text="No text selected to copy", 
+                        foreground="orange"
+                    )
+                    self.root.after(2000, lambda: 
+                        self.slider_info_label.config(
+                            text="Enter values, then click 'Apply Changes'", 
+                            foreground="blue"
+                        ) if hasattr(self, 'slider_info_label') else None
+                    )
+                return False
+        except tk.TclError:
+            # No text selected
+            if hasattr(self, 'slider_info_label'):
+                self.slider_info_label.config(
+                    text="No text selected to copy", 
+                    foreground="orange"
+                )
+                self.root.after(2000, lambda: 
+                    self.slider_info_label.config(
+                        text="Enter values, then click 'Apply Changes'", 
+                        foreground="blue"
+                    ) if hasattr(self, 'slider_info_label') else None
+                )
+            return False
+
+    def copy_text_all(self, text_widget):
+        """Copy all text from a Text widget to clipboard"""
+        try:
+            # Get all text
+            all_text = text_widget.get("1.0", tk.END)
+            if all_text.strip():
+                self.root.clipboard_clear()
+                self.root.clipboard_append(all_text)
+                self.root.update()
+            
+                # Show success message
+                if hasattr(self, 'slider_info_label'):
+                    self.slider_info_label.config(
+                        text="✓ All text copied to clipboard", 
+                        foreground="green"
+                    )
+                    self.root.after(2000, lambda: 
+                        self.slider_info_label.config(
+                            text="Enter values, then click 'Apply Changes'", 
+                            foreground="blue"
+                        ) if hasattr(self, 'slider_info_label') else None
+                    )
+                return True
+            return False
+        except Exception as e:
+            print(f"Error copying all text: {e}")
+            return False
+    
     def display_diagnostic_plots(self, fig):
         """
         Display the diagnostic plots in the GUI with both scrollbars.
@@ -9186,6 +9540,9 @@ class GasExchangeApp:
         hsb = ttk.Scrollbar(stats_tab, orient="horizontal", command=self.stats_tree.xview)
         self.stats_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
+        # Context menu for copying table data
+        self.setup_treeview_copy_menu(self.stats_tree)
+        
         self.stats_tree.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         vsb.grid(row=0, column=1, sticky=(tk.N, tk.S))
         hsb.grid(row=1, column=0, sticky=(tk.E, tk.W))
@@ -12827,6 +13184,9 @@ class GasExchangeApp:
         self.setup_radiation_tab()
         self.setup_batch_results_tabs()
         self.setup_notes_tab()
+        
+        # Add copy functionality to the statistics table
+        self.setup_treeview_copy_menu(self.stats_tree)
         
     def setup_introduction_tab(self):
         tab = ttk.Frame(self.main_notebook)
