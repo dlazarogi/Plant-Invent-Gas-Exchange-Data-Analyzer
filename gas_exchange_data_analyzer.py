@@ -6689,43 +6689,43 @@ class GasExchangeApp:
 
     def batch_deselect_all_channels(self):
         """Deselect all channels in batch results"""
+        # Uncheck all checkboxes
         for channel, var in self.batch_channel_vars.items():
             var.set(False)
     
         # Update selected channels list
         self.batch_selected_channels = []
     
+        # Force UI update
+        self.root.update_idletasks()
+
         # Refresh metric category plots
         if hasattr(self, 'batch_stats') and self.batch_stats:
             self.update_batch_metric_category_plots(self.batch_stats)
-    
+
         # Refresh darkness plots
         if hasattr(self, 'batch_stats') and self.batch_stats:
             if hasattr(self, 'batch_combined_df'):
                 self.update_batch_darkness_plots(self.batch_stats, self.batch_combined_df)
             else:
                 self.update_batch_darkness_plots(self.batch_stats)
-    
-        # Refresh distribution plots
-        #self.update_batch_distribution_plots(self.batch_stats)
-    
+
         # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
         self.update_wuei_distribution_tab()
        
     def on_batch_palette_change(self, event=None):
         """Update batch plots when palette changes"""
         if hasattr(self, 'batch_stats') and self.batch_stats:
-            # Clear the existing plots frame
-            for widget in self.batch_plots_frame.winfo_children():
-                widget.destroy()
-        
-            # Regenerate the batch plots with the new palette
-            # First update the palette variable for batch plots
-            palette = self.batch_palette_var.get()
-            # Temporarily store the batch palette in a separate variable
-            self.current_batch_palette = palette
-            # Regenerate plots
-            self.update_batch_plots_tab(self.batch_stats)
+            # Just update metric category plots (these are the ones actually displayed)
+            # and the distribution tab
+            self.update_batch_metric_category_plots(self.batch_stats)
+            self.update_wuei_distribution_tab()
+        else:
+                # If batch_plots_frame doesn't exist, just update the metric category plots
+                palette = self.batch_palette_var.get()
+                self.current_batch_palette = palette
+                # Update metric category plots directly
+                self.update_batch_metric_category_plots(self.batch_stats)
     
     def update_shift_time_info(self):
         """Update the time information display for Shift Start Time with integer values"""
@@ -10476,9 +10476,6 @@ class GasExchangeApp:
         for widget in self.batch_checkbox_frame.winfo_children():
             widget.destroy()
 
-        # Clear stored variables
-        self.batch_channel_vars = {}
-
         # Get sorted channels
         channels = sorted(stats_by_channel.keys())
 
@@ -10488,22 +10485,36 @@ class GasExchangeApp:
             self.batch_selected_channels = []
             return
 
+        # Store current selection state before clearing
+        current_selection = set()
+        if hasattr(self, 'batch_channel_vars'):
+            current_selection = {ch for ch, var in self.batch_channel_vars.items() if var.get()}
+    
+        # If no current selection, select all
+        if not current_selection:
+            current_selection = set(channels)
+
+        # Clear stored variables (but keep the old ones for reference)
+        self.batch_channel_vars = {}
+
         # Create checkboxes in a grid layout
         max_per_row = 6
         for idx, channel in enumerate(channels):
             row = idx // max_per_row
             col = idx % max_per_row
         
-            # Set all channels to selected by default
-            var = tk.BooleanVar(value=True)
+            # Use the current selection state if available
+            default_value = channel in current_selection
+        
+            var = tk.BooleanVar(value=default_value)
             self.batch_channel_vars[channel] = var
         
             cb = ttk.Checkbutton(self.batch_checkbox_frame, text=channel, variable=var,
                                 command=lambda ch=channel: self.on_batch_channel_toggle(ch))
             cb.grid(row=row, column=col, sticky=tk.W, padx=5, pady=2)
 
-        # Update selected channels list. Include all channels
-        self.batch_selected_channels = channels.copy()
+        # Update selected channels list
+        self.batch_selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
 
         # Configure grid columns
         for i in range(max_per_row):
@@ -11718,16 +11729,25 @@ class GasExchangeApp:
                     canvas.get_tk_widget().grid(row=0, column=0, sticky=(tk.W, tk.E))
             return
 
-        # Print channel names for debugging
-        print(f"\nUpdating batch results tabs with channels: {list(stats_by_channel.keys())}")
-
         # Update statistics table
         self.update_statistics_table(stats_by_channel)
 
-        # Populate channel selector
-        self.populate_batch_channel_selector(stats_by_channel)
+        # Populate channel selector ONLY if it hasn't been populated yet
+        # or if the channels have changed
+        if not hasattr(self, 'batch_channel_vars') or not self.batch_channel_vars:
+            self.populate_batch_channel_selector(stats_by_channel)
+        else:
+            # Just update the checkbox labels if channels changed
+            current_channels = set(stats_by_channel.keys())
+            existing_channels = set(self.batch_channel_vars.keys())
+            if current_channels != existing_channels:
+                # Channels changed, repopulate
+                self.populate_batch_channel_selector(stats_by_channel)
+            else:
+                # Keep existing selection, just update plots
+                pass
 
-        # Update metric category plots (now includes WUEi distribution in Efficiency tab)
+        # Update metric category plots
         self.update_batch_metric_category_plots(stats_by_channel)
     
         # ============ Force update WUEi distribution tab ============
