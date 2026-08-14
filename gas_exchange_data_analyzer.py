@@ -6682,7 +6682,7 @@ class GasExchangeApp:
                 self.update_batch_darkness_plots(self.batch_stats)
     
         # Refresh distribution plots
-        self.update_batch_distribution_plots(self.batch_stats)
+        #self.update_batch_distribution_plots(self.batch_stats)
     
         # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
         self.update_wuei_distribution_tab()
@@ -6707,7 +6707,7 @@ class GasExchangeApp:
                 self.update_batch_darkness_plots(self.batch_stats)
     
         # Refresh distribution plots
-        self.update_batch_distribution_plots(self.batch_stats)
+        #self.update_batch_distribution_plots(self.batch_stats)
     
         # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
         self.update_wuei_distribution_tab()
