@@ -102,7 +102,7 @@ def run_comprehensive_dependency_check():
         from statsmodels.formula.api import ols, mixedlm
         from statsmodels.stats.multicomp import pairwise_tukeyhsd
         
-        print("\n✓ All required packages are available!")
+        print("\n All required packages are available!")
         print("  - pandas, numpy, matplotlib")
         print("  - tkinter (built-in)")
         print("  - PIL/Pillow")
@@ -111,7 +111,7 @@ def run_comprehensive_dependency_check():
         return True
         
     except ImportError as e:
-        print(f"\n✗ Missing dependency: {e}")
+        print(f"\n Missing dependency: {e}")
         try:
             # Import only what's needed for the error dialog
             import tkinter as tk
@@ -406,7 +406,7 @@ def process_time_columns(df, time0_shift=0, remove_start=0, remove_end=0):
     for channel in df['Channel'].unique():
         channel_df = df[df['Channel'] == channel].copy().reset_index(drop=True)
         
-        # Convert HH:MM:SS → seconds since midnight
+        # Convert HH:MM:SS  seconds since midnight
         time_seconds = []
         for time_str in channel_df['time']:
             parts = str(time_str).split(':')
@@ -2439,7 +2439,7 @@ class ANOVAAnalyzer:
                         }
                         
                         if validation_errors:
-                            print(f"⚠ WARNING: Found {len(validation_errors)} letter assignment errors")
+                            print(f" WARNING: Found {len(validation_errors)} letter assignment errors")
                             # Try to fix with conservative method
                             fixed_letters = self._generate_conservative_letters(
                                 results['groups'],
@@ -2461,12 +2461,12 @@ class ANOVAAnalyzer:
                                         'was_fixed': True
                                     }
             except Exception as e:
-                print(f"⚠ Error generating Games-Howell compact letters: {e}")
+                print(f" Error generating Games-Howell compact letters: {e}")
                 results['games_howell']['compact_letters'] = {}
 
         except Exception as e:
             results['games_howell'] = {'note': f'Games-Howell failed: {str(e)}'}
-            print(f"⚠ Games-Howell failed: {e}")
+            print(f" Games-Howell failed: {e}")
 
         # 5d. Kruskal-Wallis Test (non-parametric)
         try:
@@ -2654,7 +2654,7 @@ class ANOVAAnalyzer:
             }
 
         except Exception as e:
-            print(f"⚠ Tukey HSD failed: {e}")
+            print(f" Tukey HSD failed: {e}")
             results['tukey'] = {'error': str(e)}
             results['posthoc']['error'] = str(e)  # Use posthoc key
 
@@ -2735,7 +2735,7 @@ class ANOVAAnalyzer:
             if 'note' in n_test:
                 output.append(f"  {n_test['group']}: {n_test['note']}")
             else:
-                status = "✓ Normal" if n_test['normal'] else "✗ Non-normal"
+                status = " Normal" if n_test['normal'] else " Non-normal"
                 output.append(
                     f"  {n_test['group']}: W={n_test['statistic']:.4f}, p={n_test['p_value']:.4f} ({status})"
                 )
@@ -2745,7 +2745,7 @@ class ANOVAAnalyzer:
         if 'note' in lv:
             output.append(f"Homogeneity of variances: {lv['note']}")
         else:
-            status = "✓ Homogeneous" if lv['homogeneous'] else "✗ Heterogeneous"
+            status = " Homogeneous" if lv['homogeneous'] else " Heterogeneous"
             output.append(
                 f"Homogeneity of variances: W={lv['statistic']:.4f}, p={lv['p_value']:.4f} ({status})"
             )
@@ -2753,9 +2753,9 @@ class ANOVAAnalyzer:
         # Assumptions summary
         assump = results['assumptions']
         output.append(f"\nAssumptions summary:")
-        output.append(f"  Normality: {'✓ Met' if assump['normality_ok'] else '✗ Not met'}")
-        output.append(f"  Homogeneity: {'✓ Met' if assump['homogeneity_ok'] else '✗ Not met'}")
-        output.append(f"  All assumptions met: {'✓ Yes' if assump['all_assumptions_met'] else '✗ No'}")
+        output.append(f"  Normality: {' Met' if assump['normality_ok'] else ' Not met'}")
+        output.append(f"  Homogeneity: {' Met' if assump['homogeneity_ok'] else ' Not met'}")
+        output.append(f"  All assumptions met: {' Yes' if assump['all_assumptions_met'] else ' No'}")
         output.append("")
 
         # 3. STANDARD ANOVA RESULTS
@@ -2767,7 +2767,7 @@ class ANOVAAnalyzer:
             output.append(f"p-value: {anova['p_value']:.4f}")
             output.append(f"df: {anova['df_group']:.0f}, {anova['df_residual']:.0f}")
             output.append(f"SS: {anova['ss_group']:.2f} (group), {anova['ss_residual']:.2f} (residual)")
-            output.append(f"Significant at α={anova['alpha']}: {'✓ Yes' if anova['significant'] else '✗ No'}")
+            output.append(f"Significant at α={anova['alpha']}: {' Yes' if anova['significant'] else ' No'}")
             output.append("")
 
         # 4. EFFECT SIZE
@@ -2792,7 +2792,7 @@ class ANOVAAnalyzer:
                 output.append(f"  p-value: {welch['p_value']:.4f}")
                 if 'df_between' in welch and 'df_within' in welch:
                     output.append(f"  df: {welch['df_between']:.0f}, {welch['df_within']:.1f}")
-                output.append(f"  Significant at α={results['anova']['alpha']}: {'✓ Yes' if welch['significant'] else '✗ No'}")
+                output.append(f"  Significant at α={results['anova']['alpha']}: {' Yes' if welch['significant'] else ' No'}")
                 output.append(f"  Note: {welch.get('note', 'Welch\'s ANOVA is robust to unequal variances')}")
             else:
                 output.append(f"  {welch.get('note', 'Welch\'s ANOVA not available')}")
@@ -2808,14 +2808,14 @@ class ANOVAAnalyzer:
             if 'validation' in results['games_howell']:
                 validation = results['games_howell']['validation']
                 if validation.get('is_valid', False):
-                    output.append("  ✓ Letter assignments validated - no inconsistencies found")
+                    output.append("   Letter assignments validated - no inconsistencies found")
                 else:
                     errors = validation.get('errors', [])
-                    output.append(f"  ⚠ WARNING: Found {len(errors)} letter assignment inconsistency(ies):")
+                    output.append(f"   WARNING: Found {len(errors)} letter assignment inconsistency(ies):")
                     for err in errors[:5]:
-                        output.append(f"    → {err}")
+                        output.append(f"     {err}")
                     if len(errors) > 5:
-                        output.append(f"    → ... and {len(errors) - 5} more")
+                        output.append(f"     ... and {len(errors) - 5} more")
                 output.append("")
     
             if 'compact_letters' in results['games_howell'] and results['games_howell']['compact_letters']:
@@ -2879,10 +2879,10 @@ class ANOVAAnalyzer:
             output.append("-" * 45)
     
             if not results['assumptions']['all_assumptions_met']:
-                output.append("  ⚠ WARNING: Tukey HSD assumes equal variances and normality")
-                output.append("  → These assumptions are VIOLATED (see Section 2)")
-                output.append("  → Games-Howell results (Section 6) are more reliable")
-                output.append("  → Tukey results shown for reference only")
+                output.append("   WARNING: Tukey HSD assumes equal variances and normality")
+                output.append("   These assumptions are VIOLATED (see Section 2)")
+                output.append("   Games-Howell results (Section 6) are more reliable")
+                output.append("   Tukey results shown for reference only")
                 output.append("")
     
             if 'note' in results['tukey']:
@@ -2952,7 +2952,7 @@ class ANOVAAnalyzer:
             elif 'h_statistic' in kw and not np.isnan(kw['h_statistic']):
                 output.append(f"  H-statistic: {kw['h_statistic']:.3f}")
                 output.append(f"  p-value: {kw['p_value']:.4f}")
-                output.append(f"  Significant at α={results['anova']['alpha']}: {'✓ Yes' if kw['significant'] else '✗ No'}")
+                output.append(f"  Significant at α={results['anova']['alpha']}: {' Yes' if kw['significant'] else ' No'}")
                 output.append(f"  Note: {kw.get('note', 'Kruskal-Wallis is a non-parametric alternative to ANOVA')}")
             else:
                 output.append(f"  {kw.get('note', 'Kruskal-Wallis not available')}")
@@ -3041,24 +3041,24 @@ class ANOVAAnalyzer:
         assumptions_met = results['assumptions'].get('all_assumptions_met', False)
     
         if assumptions_met:
-            output.append("  ✓ All ANOVA assumptions met")
+            output.append("   All ANOVA assumptions met")
             if anova_sig:
-                output.append("  ✓ Standard ANOVA found significant differences")
-                output.append("  → Use Tukey HSD for pairwise comparisons")
+                output.append("   Standard ANOVA found significant differences")
+                output.append("   Use Tukey HSD for pairwise comparisons")
             else:
-                output.append("  ✗ No significant differences found in standard ANOVA")
+                output.append("   No significant differences found in standard ANOVA")
         else:
-            output.append("  ⚠ ANOVA assumptions NOT fully met")
-            output.append("  → Consider using robust alternatives:")
+            output.append("   ANOVA assumptions NOT fully met")
+            output.append("   Consider using robust alternatives:")
     
             if 'welch_anova' in results and results['welch_anova'].get('significant', False):
-                output.append("    ✓ Welch's ANOVA found significant differences")
-                output.append("    → Use Games-Howell for pairwise comparisons")
+                output.append("     Welch's ANOVA found significant differences")
+                output.append("     Use Games-Howell for pairwise comparisons")
             elif 'kruskal_wallis' in results and results['kruskal_wallis'].get('significant', False):
-                output.append("    ✓ Kruskal-Wallis found significant differences")
-                output.append("    → Use Dunn's test for pairwise comparisons")
+                output.append("     Kruskal-Wallis found significant differences")
+                output.append("     Use Dunn's test for pairwise comparisons")
             else:
-                output.append("    ✗ No significant differences found in robust tests")
+                output.append("     No significant differences found in robust tests")
 
         if 'effect_size' in results:
             es = results['effect_size']
@@ -3299,7 +3299,7 @@ class ANOVAAnalyzer:
                 results['analysis_note'] = 'Used Two-Way ANOVA with effect sizes.'
             
             except Exception as e:
-                print(f"⚠ Two-Way ANOVA failed: {e}")
+                print(f" Two-Way ANOVA failed: {e}")
                 results['rm_anova_within'] = {'error': str(e)}
                 results['rm_anova_between'] = {'error': str(e)}
                 results['rm_anova_interaction'] = {'error': str(e)}
@@ -3410,7 +3410,7 @@ class ANOVAAnalyzer:
                     }
             
             except Exception as e:
-                print(f"⚠ Mixed model failed: {e}")
+                print(f" Mixed model failed: {e}")
                 results['rm_anova_within'] = {'error': str(e)}
                 results['rm_anova_between'] = {'error': str(e)}
                 results['rm_anova_interaction'] = {'error': str(e)}
@@ -3534,33 +3534,33 @@ class ANOVAAnalyzer:
         if 'error' not in within:
             recommendations.append("WITHIN-SUBJECTS (PHASE) EFFECT:")
             if within.get('significant', False):
-                recommendations.append(f"  ✓ SIGNIFICANT Phase effect (F={within.get('f_value', 0):.3f}, p={within.get('p_value', 1):.4f})")
-                recommendations.append("  → Light and dark phases differ significantly within the same subjects")
+                recommendations.append(f"   SIGNIFICANT Phase effect (F={within.get('f_value', 0):.3f}, p={within.get('p_value', 1):.4f})")
+                recommendations.append("   Light and dark phases differ significantly within the same subjects")
             else:
-                recommendations.append(f"  ✗ No significant Phase effect (p={within.get('p_value', 1):.4f})")
-                recommendations.append("  → Light and dark phases show similar responses")
+                recommendations.append(f"   No significant Phase effect (p={within.get('p_value', 1):.4f})")
+                recommendations.append("   Light and dark phases show similar responses")
         recommendations.append("")
     
         # Group effect (between-subjects)
         if 'error' not in between:
             recommendations.append("BETWEEN-SUBJECTS (GROUP) EFFECT:")
             if between.get('significant', False):
-                recommendations.append(f"  ✓ SIGNIFICANT Group effect (F={between.get('f_value', 0):.3f}, p={between.get('p_value', 1):.4f})")
-                recommendations.append("  → Channels differ significantly in their values")
+                recommendations.append(f"   SIGNIFICANT Group effect (F={between.get('f_value', 0):.3f}, p={between.get('p_value', 1):.4f})")
+                recommendations.append("   Channels differ significantly in their values")
             else:
-                recommendations.append(f"  ✗ No significant Group effect (p={between.get('p_value', 1):.4f})")
+                recommendations.append(f"   No significant Group effect (p={between.get('p_value', 1):.4f})")
         recommendations.append("")
     
         # Interaction
         if 'error' not in interaction:
             recommendations.append("GROUP × PHASE INTERACTION:")
             if interaction.get('significant', False):
-                recommendations.append(f"  ⚠ SIGNIFICANT interaction (F={interaction.get('f_value', 0):.3f}, p={interaction.get('p_value', 1):.4f})")
-                recommendations.append("  → The effect of phase depends on the channel")
-                recommendations.append("  → Interpret phase effects within each group separately")
+                recommendations.append(f"   SIGNIFICANT interaction (F={interaction.get('f_value', 0):.3f}, p={interaction.get('p_value', 1):.4f})")
+                recommendations.append("   The effect of phase depends on the channel")
+                recommendations.append("   Interpret phase effects within each group separately")
             else:
-                recommendations.append(f"  ✗ No significant interaction (p={interaction.get('p_value', 1):.4f})")
-                recommendations.append("  → The phase effect is consistent across channels")
+                recommendations.append(f"   No significant interaction (p={interaction.get('p_value', 1):.4f})")
+                recommendations.append("   The phase effect is consistent across channels")
         recommendations.append("")
     
         # Sphericity
@@ -3568,10 +3568,10 @@ class ANOVAAnalyzer:
         if 'error' not in sphericity and sphericity:
             recommendations.append("SPHERICITY ASSUMPTION:")
             if sphericity.get('spherical', True):
-                recommendations.append("  ✓ Sphericity assumption met (p={:.4f})".format(sphericity.get('p_value', 1)))
+                recommendations.append("   Sphericity assumption met (p={:.4f})".format(sphericity.get('p_value', 1)))
             else:
-                recommendations.append("  ⚠ Sphericity violated (p={:.4f})".format(sphericity.get('p_value', 1)))
-                recommendations.append("  → Consider Greenhouse-Geisser or Huynh-Feldt corrections")
+                recommendations.append("   Sphericity violated (p={:.4f})".format(sphericity.get('p_value', 1)))
+                recommendations.append("   Consider Greenhouse-Geisser or Huynh-Feldt corrections")
         recommendations.append("")
     
         # Phase comparisons
@@ -3586,13 +3586,13 @@ class ANOVAAnalyzer:
                     sig = comp.get('significant', False)
                     if sig:
                         significant_diffs += 1
-                    recommendations.append(f"  {'✓' if sig else '✗'} {group}: Light={comp.get('light_mean', 0):.3f}, Dark={comp.get('dark_mean', 0):.3f}")
+                    recommendations.append(f"  {'' if sig else ''} {group}: Light={comp.get('light_mean', 0):.3f}, Dark={comp.get('dark_mean', 0):.3f}")
                     recommendations.append(f"    Difference: {diff:.3f} ({rel_change:.1f}% change)")
         
             if significant_diffs > 0:
                 recommendations.append("")
-                recommendations.append(f"  ⚠ {significant_diffs} channel(s) show significant light-dark differences")
-                recommendations.append("  → Use paired comparisons for robust inference")
+                recommendations.append(f"   {significant_diffs} channel(s) show significant light-dark differences")
+                recommendations.append("   Use paired comparisons for robust inference")
     
         # Recommendations
         recommendations.append("")
@@ -3669,7 +3669,7 @@ class ANOVAAnalyzer:
             output.append(f"  F-value: {within.get('f_value', 0):.3f}")
             output.append(f"  p-value: {within.get('p_value', 1):.4f}")
             output.append(f"  df: {within.get('df', 0):.0f}, {within.get('df_den', 0):.0f}")
-            output.append(f"  Significant: {'✓ Yes' if within.get('significant', False) else '✗ No'}")
+            output.append(f"  Significant: {' Yes' if within.get('significant', False) else ' No'}")
         else:
             output.append("Within-Subjects Effect (Phase):")
             output.append(f"  {within.get('error', 'Results not available')}")
@@ -3682,8 +3682,8 @@ class ANOVAAnalyzer:
             output.append(f"  F-value: {between.get('f_value', 0):.3f}")
             output.append(f"  p-value: {between.get('p_value', 1):.4f}")
             output.append(f"  df: {between.get('df', 0):.0f}, {between.get('df_den', 0):.0f}")
-            output.append(f"  Significant: {'✓ Yes' if between.get('significant', False) else '✗ No'}")
-            output.append("  → Tests if channels differ overall")
+            output.append(f"  Significant: {' Yes' if between.get('significant', False) else ' No'}")
+            output.append("   Tests if channels differ overall")
         output.append("")
     
         # Interaction
@@ -3693,8 +3693,8 @@ class ANOVAAnalyzer:
             output.append(f"  F-value: {interaction.get('f_value', 0):.3f}")
             output.append(f"  p-value: {interaction.get('p_value', 1):.4f}")
             output.append(f"  df: {interaction.get('df', 0):.0f}, {interaction.get('df_den', 0):.0f}")
-            output.append(f"  Significant: {'✓ Yes' if interaction.get('significant', False) else '✗ No'}")
-            output.append("  → Tests if the phase effect differs between channels")
+            output.append(f"  Significant: {' Yes' if interaction.get('significant', False) else ' No'}")
+            output.append("   Tests if the phase effect differs between channels")
         output.append("")
 
         # 4. Sphericity
@@ -3704,9 +3704,9 @@ class ANOVAAnalyzer:
             output.append("-" * 50)
             output.append(f"  W-statistic: {sphericity.get('statistic', 0):.4f}")
             output.append(f"  p-value: {sphericity.get('p_value', 1):.4f}")
-            output.append(f"  Assumption met: {'✓ Yes' if sphericity.get('spherical', True) else '✗ No'}")
+            output.append(f"  Assumption met: {' Yes' if sphericity.get('spherical', True) else ' No'}")
             if not sphericity.get('spherical', True):
-                output.append("  ⚠ Consider Greenhouse-Geisser or Huynh-Feldt corrections")
+                output.append("   Consider Greenhouse-Geisser or Huynh-Feldt corrections")
             output.append("")
 
         # 5. Phase Comparisons
@@ -3721,7 +3721,7 @@ class ANOVAAnalyzer:
             for g in sorted_groups:
                 if g in comps and 'error' not in comps[g]:
                     comp = comps[g]
-                    sig = "✓" if comp.get('significant', False) else "✗"
+                    sig = "" if comp.get('significant', False) else ""
                     rel_change = comp.get('relative_change', 0)
                     output.append(f"{g:<15} {comp.get('light_mean', 0):>10.3f} {comp.get('dark_mean', 0):>10.3f} "
                                 f"{comp.get('difference', 0):>10.3f} {rel_change:>9.1f}% {sig:>6}")
@@ -3838,7 +3838,7 @@ class ANOVAAnalyzer:
             model = ols(f'{value_col} ~ C(group)', data=analysis_df).fit()
             residuals = model.resid
             fitted = model.fittedvalues
-            print(f"✓ Model fitted for diagnostic plots (n={len(residuals)})")
+            print(f" Model fitted for diagnostic plots (n={len(residuals)})")
         except Exception as e:
             print(f"Could not fit model for residuals: {e}")
             # Try alternative approach using group means
@@ -3847,7 +3847,7 @@ class ANOVAAnalyzer:
                 analysis_df['mean'] = analysis_df['group'].map(group_means)
                 residuals = analysis_df[value_col] - analysis_df['mean']
                 fitted = analysis_df['mean']
-                print(f"✓ Using group means for diagnostics (n={len(residuals)})")
+                print(f" Using group means for diagnostics (n={len(residuals)})")
             except Exception as e2:
                 print(f"Could not calculate residuals: {e2}")
                 # Create a simple version without residuals
@@ -3896,7 +3896,7 @@ class ANOVAAnalyzer:
                                 xy=(0.05, 0.95), xycoords='axes fraction',
                                 fontsize=10, bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
                     if shapiro_p < 0.05:
-                        ax1.annotate('⚠ Residuals deviate from normality',
+                        ax1.annotate(' Residuals deviate from normality',
                                     xy=(0.05, 0.88), xycoords='axes fraction',
                                     fontsize=10, color='red')
                 except:
@@ -4419,7 +4419,7 @@ class LLMAnalyzer:
         print(f"Min: {min_time_points}, Max: {max_time_points}")
 
         if min_time_points < max_time_points and min_time_points > 0:
-            print(f"⚠ WARNING: Unbalanced data detected. Balancing to {min_time_points} time points per line per phase.")
+            print(f" WARNING: Unbalanced data detected. Balancing to {min_time_points} time points per line per phase.")
         
             balanced_dfs = []
             # For each line and phase combination, keep only common time points
@@ -4576,13 +4576,13 @@ class LLMAnalyzer:
                             model_fitted = True
                             results['model_full'] = result_full
                             results['model_for_diagnostics'] = result_full
-                            print(f"✓ Full mixed model fitted successfully")
+                            print(f" Full mixed model fitted successfully")
                             print(f"  Log-likelihood: {result_full.llf:.2f}")
                     else:
                         use_ols = True
                     
                 except Exception as e:
-                    print(f"⚠ Mixed model failed: {e}")
+                    print(f" Mixed model failed: {e}")
                     use_ols = True
             
                 # ============ FALLBACK TO OLS IF NEEDED ============
@@ -4640,11 +4640,11 @@ class LLMAnalyzer:
                     
                         results['random_effects']['note'] = 'OLS used (random effects were singular/near-zero)'
                         model_fitted = True
-                        print(f"✓ OLS model fitted successfully")
+                        print(f" OLS model fitted successfully")
                         print(f"  R-squared: {model_ols.rsquared:.4f}")
                     
                     except Exception as e2:
-                        print(f"⚠ OLS also failed: {e2}")
+                        print(f" OLS also failed: {e2}")
                         return {'error': f'Model fitting failed: {str(e2)}'}
             
                 # ============ POST-HOC COMPARISONS ============
@@ -4702,7 +4702,7 @@ class LLMAnalyzer:
                             results['posthoc']['compact_letters'] = compact_letters
                         
                     except Exception as e:
-                        print(f"⚠ Post-hoc comparisons failed: {e}")
+                        print(f" Post-hoc comparisons failed: {e}")
                         results['posthoc']['error'] = str(e)
             
                 # ============ MODEL DIAGNOSTICS ============
@@ -4733,7 +4733,7 @@ class LLMAnalyzer:
                                     }
                                     print(f"Shapiro-Wilk: W={shapiro_stat:.4f}, p={shapiro_p:.6f}")
                                 except Exception as e:
-                                    print(f"⚠ Shapiro-Wilk test failed: {e}")
+                                    print(f" Shapiro-Wilk test failed: {e}")
                                     results['diagnostics']['shapiro_wilk'] = {'note': str(e)}
                     
                         # Breusch-Pagan test for heteroscedasticity (only if model has exog)
@@ -4750,10 +4750,10 @@ class LLMAnalyzer:
                                     }
                                     print(f"Breusch-Pagan: LM={bp_test[0]:.4f}, p={bp_test[1]:.6f}")
                             except Exception as e:
-                                print(f"⚠ Breusch-Pagan test failed: {e}")
+                                print(f" Breusch-Pagan test failed: {e}")
                             
                     except Exception as e:
-                        print(f"⚠ Diagnostics failed: {e}")
+                        print(f" Diagnostics failed: {e}")
                         results['diagnostics']['error'] = str(e)
             
                 # ============ RECOMMENDATIONS ============
@@ -4766,7 +4766,7 @@ class LLMAnalyzer:
                 return results
             
         except Exception as e:
-            print(f"⚠ LMM analysis failed: {e}")
+            print(f" LMM analysis failed: {e}")
             traceback.print_exc()
             return {'error': f'LMM analysis failed: {str(e)}'}
     
@@ -4792,7 +4792,7 @@ class LLMAnalyzer:
 
         # If only one phase, use standard LMM
         if not has_dark:
-            print("⚠ Only light phase detected. Using standard LMM instead of light-dark LMM.")
+            print(" Only light phase detected. Using standard LMM instead of light-dark LMM.")
             # Use standard LMM (which handles continuous light experiments)
             results = self.run_linear_mixed_model(df, metric, alpha)
             # Add note about light-dark detection
@@ -4866,12 +4866,12 @@ class LLMAnalyzer:
                             results['model_full'] = result_full
                             results['model_for_diagnostics'] = result_full
                             results['model_summary']['full'] = str(result_full.summary())
-                            print(f"✓ Full mixed model fitted successfully")
+                            print(f" Full mixed model fitted successfully")
                     else:
                         use_ols = True
                     
                 except Exception as e:
-                    print(f"⚠ Full mixed model failed: {e}")
+                    print(f" Full mixed model failed: {e}")
                     use_ols = True
             
                 # ============ FALLBACK TO OLS ============
@@ -4931,11 +4931,11 @@ class LLMAnalyzer:
                     
                         results['random_effects']['note'] = 'OLS used (random effects were singular/near-zero)'
                         model_fitted = True
-                        print(f"✓ OLS model fitted successfully")
+                        print(f" OLS model fitted successfully")
                         print(f"  R-squared: {model_ols.rsquared:.4f}")
                     
                     except Exception as e2:
-                        print(f"⚠ OLS also failed: {e2}")
+                        print(f" OLS also failed: {e2}")
                         return {'error': f'Model fitting failed: {str(e2)}'}
             
                 # ============ PHASE COMPARISONS ============
@@ -4955,7 +4955,7 @@ class LLMAnalyzer:
                             })
                         results['phase_comparisons'] = phase_comparisons
                     except Exception as e:
-                        print(f"⚠ Phase comparisons failed: {e}")
+                        print(f" Phase comparisons failed: {e}")
                 
                     # ============ POST-HOC FOR EACH PHASE ============
                     for phase in ['light', 'dark']:
@@ -4987,7 +4987,7 @@ class LLMAnalyzer:
                                     'n_significant': sum(1 for p in tukey_pairs if p.get('significant', False))
                                 }
                             except Exception as e:
-                                print(f"⚠ Tukey for {phase} phase failed: {e}")
+                                print(f" Tukey for {phase} phase failed: {e}")
                 
                     # ============ DIAGNOSTICS ============
                     if best_model is not None and hasattr(best_model, 'resid'):
@@ -5012,9 +5012,9 @@ class LLMAnalyzer:
                                     }
                                     print(f"Shapiro-Wilk: W={shapiro_stat:.4f}, p={shapiro_p:.6f}")
                                 except Exception as e:
-                                    print(f"⚠ Shapiro-Wilk test failed: {e}")
+                                    print(f" Shapiro-Wilk test failed: {e}")
                         except Exception as e:
-                            print(f"⚠ Diagnostics failed: {e}")
+                            print(f" Diagnostics failed: {e}")
                 
                     # ============ RECOMMENDATIONS ============
                     results['recommendations'] = self._generate_light_dark_recommendations(results, alpha)
@@ -5026,7 +5026,7 @@ class LLMAnalyzer:
                 return results
 
         except Exception as e:
-            print(f"⚠ LMM analysis failed: {e}")
+            print(f" LMM analysis failed: {e}")
             traceback.print_exc()
             return {'error': f'LMM analysis failed: {str(e)}'}
 
@@ -5062,31 +5062,31 @@ class LLMAnalyzer:
         phase_test = results.get('fixed_effects', {}).get('phase_test', {})
         if phase_test:
             if phase_test.get('significant', False):
-                recommendations.append(f"✓ SIGNIFICANT Phase effect (p={phase_test.get('p_value', 1):.4f})")
-                recommendations.append("  → Light and dark phases show different responses")
+                recommendations.append(f" SIGNIFICANT Phase effect (p={phase_test.get('p_value', 1):.4f})")
+                recommendations.append("   Light and dark phases show different responses")
             else:
-                recommendations.append(f"✗ No significant Phase effect (p={phase_test.get('p_value', 1):.4f})")
-                recommendations.append("  → Light and dark phases show similar responses")
+                recommendations.append(f" No significant Phase effect (p={phase_test.get('p_value', 1):.4f})")
+                recommendations.append("   Light and dark phases show similar responses")
     
         # Line × Phase interaction
         interaction = results.get('fixed_effects', {}).get('line_phase_interaction', {})
         if interaction:
             if interaction.get('significant', False):
-                recommendations.append(f"⚠ Significant Line × Phase interaction (p={interaction.get('p_value', 1):.4f})")
-                recommendations.append("  → Lines respond differently to light/dark transitions")
+                recommendations.append(f" Significant Line × Phase interaction (p={interaction.get('p_value', 1):.4f})")
+                recommendations.append("   Lines respond differently to light/dark transitions")
             else:
-                recommendations.append(f"✗ No significant Line × Phase interaction (p={interaction.get('p_value', 1):.4f})")
-                recommendations.append("  → Lines show consistent response pattern across phases")
+                recommendations.append(f" No significant Line × Phase interaction (p={interaction.get('p_value', 1):.4f})")
+                recommendations.append("   Lines show consistent response pattern across phases")
     
         # Phase × Time interaction
         phase_time = results.get('fixed_effects', {}).get('phase_time_interaction', {})
         if phase_time:
             if phase_time.get('significant', False):
-                recommendations.append(f"⚠ Significant Phase × Time interaction (p={phase_time.get('p_value', 1):.4f})")
-                recommendations.append("  → The time course differs between light and dark phases")
+                recommendations.append(f" Significant Phase × Time interaction (p={phase_time.get('p_value', 1):.4f})")
+                recommendations.append("   The time course differs between light and dark phases")
             else:
-                recommendations.append(f"✗ No significant Phase × Time interaction (p={phase_time.get('p_value', 1):.4f})")
-                recommendations.append("  → Time course is similar between phases")
+                recommendations.append(f" No significant Phase × Time interaction (p={phase_time.get('p_value', 1):.4f})")
+                recommendations.append("   Time course is similar between phases")
     
         # Phase comparisons
         phase_comparisons = results.get('phase_comparisons', [])
@@ -5115,7 +5115,7 @@ class LLMAnalyzer:
         
             if interaction.get('significant', False):
                 recommendations.append("  * The Line×Phase interaction suggests different rankings between phases")
-                recommendations.append("  → Compare line rankings in light vs dark phases")
+                recommendations.append("   Compare line rankings in light vs dark phases")
     
         return recommendations
     
@@ -5204,46 +5204,46 @@ class LLMAnalyzer:
         interaction_test = results.get('fixed_effects', {}).get('interaction_test', {})
         
         if line_test.get('significant', False):
-            recommendations.append(f"✓ Significant Line effect (p={line_test.get('p_value', 1):.4f}) - Lines differ in {results['metric']}")
+            recommendations.append(f" Significant Line effect (p={line_test.get('p_value', 1):.4f}) - Lines differ in {results['metric']}")
         else:
-            recommendations.append(f"✗ No significant Line effect (p={line_test.get('p_value', 1):.4f}) - Lines show similar {results['metric']}")
+            recommendations.append(f" No significant Line effect (p={line_test.get('p_value', 1):.4f}) - Lines show similar {results['metric']}")
         
         if time_test.get('significant', False):
-            recommendations.append(f"✓ Significant Time effect (p={time_test.get('p_value', 1):.4f}) - {results['metric']} changes over time")
+            recommendations.append(f" Significant Time effect (p={time_test.get('p_value', 1):.4f}) - {results['metric']} changes over time")
         else:
-            recommendations.append(f"✗ No significant Time effect (p={time_test.get('p_value', 1):.4f}) - {results['metric']} stable over time")
+            recommendations.append(f" No significant Time effect (p={time_test.get('p_value', 1):.4f}) - {results['metric']} stable over time")
         
         if interaction_test.get('significant', False):
-            recommendations.append(f"⚠ Significant Line × Time interaction (p={interaction_test.get('p_value', 1):.4f}) - Lines respond differently over time")
-            recommendations.append("  → Use time-specific pairwise comparisons")
+            recommendations.append(f" Significant Line × Time interaction (p={interaction_test.get('p_value', 1):.4f}) - Lines respond differently over time")
+            recommendations.append("   Use time-specific pairwise comparisons")
         
         # Random effects
         random_int_test = results.get('random_effects', {}).get('random_intercept_test', {})
         if random_int_test.get('significant', False):
-            recommendations.append(f"⚠ Random intercept needed - Individual plants vary (p={random_int_test.get('p_value', 1):.4f})")
-            recommendations.append("  → Mixed model is appropriate for this data")
+            recommendations.append(f" Random intercept needed - Individual plants vary (p={random_int_test.get('p_value', 1):.4f})")
+            recommendations.append("   Mixed model is appropriate for this data")
         
         random_slope_test = results.get('random_effects', {}).get('random_slope_test', {})
         if random_slope_test.get('significant', False):
-            recommendations.append(f"⚠ Random slope improves fit (p={random_slope_test.get('p_value', 1):.4f})")
-            recommendations.append("  → Plants show different trajectories over time")
+            recommendations.append(f" Random slope improves fit (p={random_slope_test.get('p_value', 1):.4f})")
+            recommendations.append("   Plants show different trajectories over time")
         
         # Diagnostics
         shapiro = results.get('diagnostics', {}).get('shapiro_wilk', {})
         if shapiro and 'note' not in shapiro:
             if shapiro.get('normal', False):
-                recommendations.append(f"✓ Residuals normal (Shapiro p={shapiro.get('p_value', 1):.4f})")
+                recommendations.append(f" Residuals normal (Shapiro p={shapiro.get('p_value', 1):.4f})")
             else:
-                recommendations.append(f"⚠ Residuals NOT normal (Shapiro p={shapiro.get('p_value', 1):.4f})")
-                recommendations.append("  → Consider transformation or robust methods")
+                recommendations.append(f" Residuals NOT normal (Shapiro p={shapiro.get('p_value', 1):.4f})")
+                recommendations.append("   Consider transformation or robust methods")
         
         bp_test = results.get('diagnostics', {}).get('breusch_pagan', {})
         if bp_test:
             if bp_test.get('homoscedastic', True):
-                recommendations.append(f"✓ Homoscedastic residuals (BP p={bp_test.get('p_value', 1):.4f})")
+                recommendations.append(f" Homoscedastic residuals (BP p={bp_test.get('p_value', 1):.4f})")
             else:
-                recommendations.append(f"⚠ Heteroscedastic residuals (BP p={bp_test.get('p_value', 1):.4f})")
-                recommendations.append("  → Consider robust standard errors")
+                recommendations.append(f" Heteroscedastic residuals (BP p={bp_test.get('p_value', 1):.4f})")
+                recommendations.append("   Consider robust standard errors")
         
         # Summary recommendations
         recommendations.append("")
@@ -5295,21 +5295,21 @@ class LLMAnalyzer:
             output.append(f"  Line effect:")
             output.append(f"    LR statistic: {line_test.get('LR_statistic', 0):.4f}")
             output.append(f"    p-value: {line_test.get('p_value', 1):.6f}")
-            output.append(f"    Significant at α=0.05: {'✓ Yes' if line_test.get('significant', False) else '✗ No'}")
+            output.append(f"    Significant at α=0.05: {' Yes' if line_test.get('significant', False) else ' No'}")
         
         time_test = results.get('fixed_effects', {}).get('time_test', {})
         if 'error' not in time_test:
             output.append(f"  Time effect:")
             output.append(f"    LR statistic: {time_test.get('LR_statistic', 0):.4f}")
             output.append(f"    p-value: {time_test.get('p_value', 1):.6f}")
-            output.append(f"    Significant at α=0.05: {'✓ Yes' if time_test.get('significant', False) else '✗ No'}")
+            output.append(f"    Significant at α=0.05: {' Yes' if time_test.get('significant', False) else ' No'}")
         
         interaction_test = results.get('fixed_effects', {}).get('interaction_test', {})
         if 'error' not in interaction_test and interaction_test:
             output.append(f"  Line × Time interaction:")
             output.append(f"    LR statistic: {interaction_test.get('LR_statistic', 0):.4f}")
             output.append(f"    p-value: {interaction_test.get('p_value', 1):.6f}")
-            output.append(f"    Significant at α=0.05: {'✓ Yes' if interaction_test.get('significant', False) else '✗ No'}")
+            output.append(f"    Significant at α=0.05: {' Yes' if interaction_test.get('significant', False) else ' No'}")
         output.append("")
         
         # Random Effects
@@ -5338,7 +5338,7 @@ class LLMAnalyzer:
         output.append("-" * 50)
         if 'model_params' in results and results['model_params']:
             for param in results['model_params']:
-                sig = '✓' if param.get('significant', False) else ''
+                sig = '' if param.get('significant', False) else ''
                 output.append(f"  {param['name']}: {param['value']:.4f} (SE={param.get('bse', 0):.4f}, p={param.get('pvalue', 1):.4f}) {sig}")
         else:
             output.append("  No model parameters available")
@@ -5398,7 +5398,7 @@ class LLMAnalyzer:
                 output.append(f"  Residual normality (Shapiro-Wilk):")
                 output.append(f"    W statistic: {shapiro.get('statistic', 0):.4f}")
                 output.append(f"    p-value: {shapiro.get('p_value', 1):.6f}")
-                output.append(f"    Normal: {'✓ Yes' if shapiro.get('normal', False) else '✗ No'}")
+                output.append(f"    Normal: {' Yes' if shapiro.get('normal', False) else ' No'}")
                 output.append(f"    Sample size: {shapiro.get('n', 0)}")
         
         resid_stats = results.get('diagnostics', {}).get('residuals', {})
@@ -5415,7 +5415,7 @@ class LLMAnalyzer:
             output.append(f"  Homoscedasticity (Breusch-Pagan):")
             output.append(f"    LM statistic: {bp_test.get('lm_statistic', 0):.4f}")
             output.append(f"    p-value: {bp_test.get('p_value', 1):.6f}")
-            output.append(f"    Homoscedastic: {'✓ Yes' if bp_test.get('homoscedastic', True) else '✗ No'}")
+            output.append(f"    Homoscedastic: {' Yes' if bp_test.get('homoscedastic', True) else ' No'}")
         output.append("")
         
         # Recommendations
@@ -5509,9 +5509,9 @@ class LLMAnalyzer:
                     'warning': None
                 }
                 valid_models_for_comparison.append('ols')
-                print(f"✓ OLS model fitted: LLF={model_ols.llf:.2f}, AIC={model_ols.aic:.2f}, R²={model_ols.rsquared:.4f}")
+                print(f" OLS model fitted: LLF={model_ols.llf:.2f}, AIC={model_ols.aic:.2f}, R²={model_ols.rsquared:.4f}")
             except Exception as e:
-                print(f"✗ OLS model failed: {e}")
+                print(f" OLS model failed: {e}")
                 results['models']['ols'] = {
                     'error': str(e),
                     'description': 'OLS (no random effects)',
@@ -5545,16 +5545,16 @@ class LLMAnalyzer:
                     if var_estimate < 1e-6:
                         singular_fit = True
                         warning_msg = f'Singular fit: random intercept variance near zero ({var_estimate:.2e})'
-                        print(f"⚠ WARNING: {warning_msg}")
+                        print(f" WARNING: {warning_msg}")
                         results['warnings'].append(warning_msg)
                     elif var_estimate < 1e-4:
                         warning_msg = f'Small random intercept variance: {var_estimate:.2e} (may indicate weak random effect)'
-                        print(f"⚠ NOTE: {warning_msg}")
+                        print(f" NOTE: {warning_msg}")
                         results['warnings'].append(warning_msg)
                 else:
                     singular_fit = True
                     warning_msg = 'Cannot compute random effect variance (model may be singular)'
-                    print(f"⚠ WARNING: {warning_msg}")
+                    print(f" WARNING: {warning_msg}")
                     results['warnings'].append(warning_msg)
             
                 # Determine if model is valid for comparison
@@ -5576,12 +5576,12 @@ class LLMAnalyzer:
             
                 if is_valid:
                     valid_models_for_comparison.append('random_intercept')
-                    print(f"✓ Random intercept model fitted: LLF={result_ri.llf:.2f}, AIC={result_ri.aic:.2f}")
+                    print(f" Random intercept model fitted: LLF={result_ri.llf:.2f}, AIC={result_ri.aic:.2f}")
                 else:
-                    print(f"⚠ Random intercept model has issues: {warning_msg}")
+                    print(f" Random intercept model has issues: {warning_msg}")
                 
             except Exception as e:
-                print(f"✗ Random intercept model failed: {e}")
+                print(f" Random intercept model failed: {e}")
                 results['models']['random_intercept'] = {
                     'error': str(e),
                     'description': 'LMM with random intercept only',
@@ -5624,27 +5624,27 @@ class LLMAnalyzer:
                         if intercept_var < 1e-6 and slope_var < 1e-6:
                             singular_fit = True
                             warning_msg = f'Singular fit: both random effects near zero (int={intercept_var:.2e}, slope={slope_var:.2e})'
-                            print(f"⚠ WARNING: {warning_msg}")
+                            print(f" WARNING: {warning_msg}")
                             results['warnings'].append(warning_msg)
                         elif intercept_var < 1e-6:
                             singular_fit = True
                             warning_msg = f'Singular fit: random intercept variance near zero ({intercept_var:.2e})'
-                            print(f"⚠ WARNING: {warning_msg}")
+                            print(f" WARNING: {warning_msg}")
                             results['warnings'].append(warning_msg)
                         elif slope_var < 1e-6:
                             singular_fit = True
                             warning_msg = f'Singular fit: random slope variance near zero ({slope_var:.2e})'
-                            print(f"⚠ WARNING: {warning_msg}")
+                            print(f" WARNING: {warning_msg}")
                             results['warnings'].append(warning_msg)
                         elif not np.isfinite(intercept_var) or not np.isfinite(slope_var):
                             singular_fit = True
                             warning_msg = 'Invalid random effect variances (NaN or Inf)'
-                            print(f"⚠ WARNING: {warning_msg}")
+                            print(f" WARNING: {warning_msg}")
                             results['warnings'].append(warning_msg)
                     else:
                         singular_fit = True
                         warning_msg = 'Cannot compute random effect variances'
-                        print(f"⚠ WARNING: {warning_msg}")
+                        print(f" WARNING: {warning_msg}")
                         results['warnings'].append(warning_msg)
                 
                     # Determine if model is valid for comparison
@@ -5668,11 +5668,11 @@ class LLMAnalyzer:
                 
                     if is_valid:
                         valid_models_for_comparison.append('random_slope')
-                        print(f"✓ Random slope model fitted: LLF={result_rs.llf:.2f}, AIC={result_rs.aic:.2f}")
+                        print(f" Random slope model fitted: LLF={result_rs.llf:.2f}, AIC={result_rs.aic:.2f}")
                     else:
-                        print(f"⚠ Random slope model has issues: {warning_msg}")
+                        print(f" Random slope model has issues: {warning_msg}")
                 else:
-                    print(f"⚠ Insufficient data for random slope: {n_subjects} subjects, min {min_obs_per_subject} obs/subject")
+                    print(f" Insufficient data for random slope: {n_subjects} subjects, min {min_obs_per_subject} obs/subject")
                     results['models']['random_slope'] = {
                         'error': f'Insufficient data: {n_subjects} subjects, min {min_obs_per_subject} obs/subject',
                         'description': 'Random slope model not fitted (insufficient data)',
@@ -5682,7 +5682,7 @@ class LLMAnalyzer:
                     }
                     results['warnings'].append('Insufficient data for random slope model')
             except Exception as e:
-                print(f"✗ Random slope model failed: {e}")
+                print(f" Random slope model failed: {e}")
                 results['models']['random_slope'] = {
                     'error': str(e),
                     'description': 'LMM with random intercept + slope',
@@ -5747,11 +5747,11 @@ class LLMAnalyzer:
                         
                             if is_valid:
                                 valid_models_for_comparison.append('reduced_fixed')
-                                print(f"✓ Reduced fixed effects model fitted: LLF={result_reduced.llf:.2f}")
+                                print(f" Reduced fixed effects model fitted: LLF={result_reduced.llf:.2f}")
                 else:
                     print("Note: OLS model not available, skipping reduced fixed effects model")
             except Exception as e:
-                print(f"✗ Reduced fixed effects model failed: {e}")
+                print(f" Reduced fixed effects model failed: {e}")
                 # Non-critical, continue
     
         # ============================================================
@@ -5799,7 +5799,7 @@ class LLMAnalyzer:
                 if is_valid_lrt:
                     print(f"  LRT: χ²({df_diff}) = {lr_stat:.4f}, p = {lr_p_value:.6f}")
                 else:
-                    print(f"  ⚠ LRT not valid (model convergence issues)")
+                    print(f"   LRT not valid (model convergence issues)")
     
         # Comparison 2: Random Intercept vs Random Slope (test if random slope is needed)
         if 'random_intercept' in results['models'] and 'random_slope' in results['models']:
@@ -5844,7 +5844,7 @@ class LLMAnalyzer:
                 if is_valid_lrt:
                     print(f"  LRT: χ²({df_diff}) = {lr_stat:.4f}, p = {lr_p_value:.6f}")
                 else:
-                    print(f"  ⚠ LRT not valid (model convergence issues)")
+                    print(f"   LRT not valid (model convergence issues)")
     
         # Comparison 3: AIC/BIC for all valid models
         aic_comparison = {}
@@ -5928,12 +5928,12 @@ class LLMAnalyzer:
     
         # Add warnings summary
         if results['warnings']:
-            recommendations.append("⚠ WARNINGS:")
+            recommendations.append(" WARNINGS:")
             for warn in results['warnings']:
-                recommendations.append(f"  • {warn}")
+                recommendations.append(f"   {warn}")
             recommendations.append("")
-            recommendations.append("  → Interpretation may be affected by these warnings")
-            recommendations.append("  → Check model validity before drawing conclusions")
+            recommendations.append("   Interpretation may be affected by these warnings")
+            recommendations.append("   Check model validity before drawing conclusions")
             recommendations.append("")
     
         # Random effect recommendations
@@ -5941,31 +5941,31 @@ class LLMAnalyzer:
             comp = results['comparisons']['ols_vs_random_intercept']
             if comp.get('valid', False):
                 if comp.get('significant', False):
-                    recommendations.append(f"✓ Random intercept is SIGNIFICANT (p={comp['p_value']:.4f})")
-                    recommendations.append("  → Use LMM with random intercept to account for subject variability")
+                    recommendations.append(f" Random intercept is SIGNIFICANT (p={comp['p_value']:.4f})")
+                    recommendations.append("   Use LMM with random intercept to account for subject variability")
                 else:
-                    recommendations.append(f"✗ Random intercept is NOT significant (p={comp['p_value']:.4f})")
-                    recommendations.append("  → OLS may be sufficient for this data")
+                    recommendations.append(f" Random intercept is NOT significant (p={comp['p_value']:.4f})")
+                    recommendations.append("   OLS may be sufficient for this data")
             else:
                 warning_msg = comp.get('warning', 'LRT not valid')
-                recommendations.append(f"⚠ Random intercept comparison NOT VALID: {warning_msg}")
-                recommendations.append("  → Check model warnings above")
+                recommendations.append(f" Random intercept comparison NOT VALID: {warning_msg}")
+                recommendations.append("   Check model warnings above")
     
         if 'ri_vs_rs' in results['comparisons']:
             comp = results['comparisons']['ri_vs_rs']
             if comp.get('valid', False):
                 if comp.get('significant', False):
-                    recommendations.append(f"✓ Random slope is SIGNIFICANT (p={comp['p_value']:.4f})")
-                    recommendations.append(f"  → Subjects have different trajectories over time")
+                    recommendations.append(f" Random slope is SIGNIFICANT (p={comp['p_value']:.4f})")
+                    recommendations.append(f"   Subjects have different trajectories over time")
                     if 'random_slope_var' in comp and not np.isnan(comp['random_slope_var']):
-                        recommendations.append(f"  → Random slope variance: {comp['random_slope_var']:.4f}")
+                        recommendations.append(f"   Random slope variance: {comp['random_slope_var']:.4f}")
                 else:
-                    recommendations.append(f"✗ Random slope is NOT significant (p={comp['p_value']:.4f})")
-                    recommendations.append("  → Random intercept model is sufficient")
+                    recommendations.append(f" Random slope is NOT significant (p={comp['p_value']:.4f})")
+                    recommendations.append("   Random intercept model is sufficient")
             else:
                 warning_msg = comp.get('warning', 'LRT not valid')
-                recommendations.append(f"⚠ Random slope comparison NOT VALID: {warning_msg}")
-                recommendations.append("  → Check model warnings above")
+                recommendations.append(f" Random slope comparison NOT VALID: {warning_msg}")
+                recommendations.append("   Check model warnings above")
     
         # Model selection recommendation
         if results.get('best_model'):
@@ -5986,29 +5986,29 @@ class LLMAnalyzer:
             if best_model_valid and best_model_warning is None:
                 recommendations.append(f"RECOMMENDED MODEL: {descriptions.get(best, best)}")
             else:
-                recommendations.append(f"⚠ RECOMMENDED MODEL: {descriptions.get(best, best)} (with warnings)")
+                recommendations.append(f" RECOMMENDED MODEL: {descriptions.get(best, best)} (with warnings)")
                 if best_model_warning:
-                    recommendations.append(f"  → {best_model_warning}")
+                    recommendations.append(f"   {best_model_warning}")
         
             # Detailed recommendation based on best model
             if best == 'random_slope':
-                recommendations.append("  → Use LMM with both random intercept and slope for best fit")
-                recommendations.append("  → This accounts for both baseline differences and varying trajectories")
+                recommendations.append("   Use LMM with both random intercept and slope for best fit")
+                recommendations.append("   This accounts for both baseline differences and varying trajectories")
             elif best == 'random_intercept':
-                recommendations.append("  → Use LMM with random intercept only")
-                recommendations.append("  → Subjects differ in baseline but have similar trajectories")
+                recommendations.append("   Use LMM with random intercept only")
+                recommendations.append("   Subjects differ in baseline but have similar trajectories")
             elif best == 'ols':
-                recommendations.append("  → OLS is sufficient (no significant random effects)")
-                recommendations.append("  → Simpler model with adequate fit")
+                recommendations.append("   OLS is sufficient (no significant random effects)")
+                recommendations.append("   Simpler model with adequate fit")
             elif best == 'reduced_fixed':
-                recommendations.append("  → Interaction term is not needed")
-                recommendations.append("  → Use additive model (Line + Time) for fixed effects")
+                recommendations.append("   Interaction term is not needed")
+                recommendations.append("   Use additive model (Line + Time) for fixed effects")
         
             # Add warning if best model has singular fit
             if results['models'].get(best, {}).get('singular_fit', False):
                 recommendations.append("")
-                recommendations.append("⚠ WARNING: Recommended model has singular fit")
-                recommendations.append("  → Consider using the next best model or OLS")
+                recommendations.append(" WARNING: Recommended model has singular fit")
+                recommendations.append("   Consider using the next best model or OLS")
     
         # Report model details
         recommendations.append("")
@@ -6029,17 +6029,17 @@ class LLMAnalyzer:
         total_count = len(results['models'])
     
         if valid_count == 0:
-            recommendations.append("  ⚠ No models converged properly. Consider:")
-            recommendations.append("    • Checking data quality and outliers")
-            recommendations.append("    • Using simpler models")
-            recommendations.append("    • Increasing sample size")
+            recommendations.append("   No models converged properly. Consider:")
+            recommendations.append("     Checking data quality and outliers")
+            recommendations.append("     Using simpler models")
+            recommendations.append("     Increasing sample size")
         elif valid_count < total_count:
-            recommendations.append(f"  ⚠ Only {valid_count}/{total_count} models are valid")
-            recommendations.append("  → Focus on the valid models for interpretation")
-            recommendations.append(f"  → Recommended: {descriptions.get(results['best_model'], results['best_model'])}")
+            recommendations.append(f"   Only {valid_count}/{total_count} models are valid")
+            recommendations.append("   Focus on the valid models for interpretation")
+            recommendations.append(f"   Recommended: {descriptions.get(results['best_model'], results['best_model'])}")
         else:
-            recommendations.append(f"  ✓ All {valid_count} models converged properly")
-            recommendations.append(f"  → Recommended: {descriptions.get(results['best_model'], results['best_model'])}")
+            recommendations.append(f"   All {valid_count} models converged properly")
+            recommendations.append(f"   Recommended: {descriptions.get(results['best_model'], results['best_model'])}")
     
         results['recommendations'] = recommendations
     
@@ -6061,14 +6061,14 @@ class LLMAnalyzer:
     
         # ============ DISPLAY WARNINGS FIRST (if any) ============
         if results.get('warnings'):
-            output.append("⚠ WARNINGS:")
+            output.append(" WARNINGS:")
             output.append("-" * 50)
             for warn in results['warnings']:
-                output.append(f"  • {warn}")
+                output.append(f"   {warn}")
             output.append("")
-            output.append("  → These warnings indicate model convergence issues")
-            output.append("  → Results should be interpreted with caution")
-            output.append("  → Consider using OLS model for reliable inference")
+            output.append("   These warnings indicate model convergence issues")
+            output.append("   Results should be interpreted with caution")
+            output.append("   Consider using OLS model for reliable inference")
             output.append("")
     
         # ============ MODEL SUMMARIES ============
@@ -6091,9 +6091,9 @@ class LLMAnalyzer:
         
             # Show validity status
             if model_data.get('valid', False):
-                output.append(f"    Status: ✓ Valid")
+                output.append(f"    Status:  Valid")
             else:
-                output.append(f"    Status: ⚠ Invalid/Convergence Issue")
+                output.append(f"    Status:  Invalid/Convergence Issue")
         
             # Show log-likelihood (if valid)
             llf = model_data.get('log_likelihood')
@@ -6143,9 +6143,9 @@ class LLMAnalyzer:
         
             # Show warning if present
             if model_data.get('warning'):
-                output.append(f"    ⚠ WARNING: {model_data['warning']}")
+                output.append(f"     WARNING: {model_data['warning']}")
             if model_data.get('singular_fit', False):
-                output.append(f"    ⚠ Singular fit detected")
+                output.append(f"     Singular fit detected")
     
         output.append("")
     
@@ -6164,14 +6164,14 @@ class LLMAnalyzer:
                 output.append(f"    df: {comp.get('df', 0)}")
                 output.append(f"    p-value: {comp.get('p_value', 1):.6f}")
                 if comp.get('significant', False):
-                    output.append("    ✓ Significant")
+                    output.append("     Significant")
                 else:
-                    output.append("    ✗ Not significant")
+                    output.append("     Not significant")
                 output.append(f"    {comp.get('interpretation', '')}")
                 output.append(f"    Log-likelihood OLS: {comp.get('log_likelihood_ols', 'N/A'):.2f}")
                 output.append(f"    Log-likelihood RI: {comp.get('log_likelihood_ri', 'N/A'):.2f}")
             else:
-                output.append(f"    ⚠ NOT VALID: {comp.get('warning', 'LRT not valid')}")
+                output.append(f"     NOT VALID: {comp.get('warning', 'LRT not valid')}")
     
         # Random Intercept vs Random Slope
         if 'ri_vs_rs' in results.get('comparisons', {}):
@@ -6184,16 +6184,16 @@ class LLMAnalyzer:
                 output.append(f"    df: {comp.get('df', 0)}")
                 output.append(f"    p-value: {comp.get('p_value', 1):.6f}")
                 if comp.get('significant', False):
-                    output.append("    ✓ Significant")
+                    output.append("     Significant")
                 else:
-                    output.append("    ✗ Not significant")
+                    output.append("     Not significant")
                 output.append(f"    {comp.get('interpretation', '')}")
                 output.append(f"    Log-likelihood RI: {comp.get('log_likelihood_ri', 'N/A'):.2f}")
                 output.append(f"    Log-likelihood RS: {comp.get('log_likelihood_rs', 'N/A'):.2f}")
                 if 'random_slope_var' in comp and not np.isnan(comp['random_slope_var']):
                     output.append(f"    Random slope variance: {comp['random_slope_var']:.4f}")
             else:
-                output.append(f"    ⚠ NOT VALID: {comp.get('warning', 'LRT not valid')}")
+                output.append(f"     NOT VALID: {comp.get('warning', 'LRT not valid')}")
     
         # AIC/BIC comparison
         if 'aic_bic' in results.get('comparisons', {}):
@@ -6227,6 +6227,2076 @@ class LLMAnalyzer:
     
         return "\n".join(output)
       
+
+# ============================================
+# ANCOVA CLASS
+# ============================================
+# Define scientifically valid ANCOVA pairs with context
+ANCOVA_CONFIGS = {
+    # ===== PHOTOSYNTHESIS =====
+    'CO2_exchange_rate': {
+        'display_name': 'Net Photosynthesis (A)',
+        'unit': 'μmol CO₂/m²s',
+        'suitable_covariates': {
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Photosynthetic light response - standard light curve analysis',
+                'interpretation': 'A adjusted for light intensity'
+            },
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Stomatal limitation of photosynthesis due to VPD',
+                'interpretation': 'A adjusted for atmospheric drought'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on photosynthetic enzymes',
+                'interpretation': 'A adjusted for temperature effects'
+            },
+            'intercell_CO2_conc_in_gas_phase': {
+                'display': 'Intercellular CO₂ (C_i)',
+                'context': 'Biochemical limitation vs stomatal limitation',
+                'interpretation': 'A adjusted for C_i (A-C_i curve analysis)'
+            },
+            'CO2_M': {
+                'display': 'Ambient CO₂',
+                'context': 'CO₂ supply effects on photosynthesis',
+                'interpretation': 'A adjusted for ambient CO₂'
+            }
+        },
+        'default_covariate': 'absorbed_radiation',
+        'description': 'Net CO₂ assimilation rate - primary measure of photosynthetic performance'
+    },
+    
+    'P_gross': {
+        'display_name': 'Gross Photosynthesis (P_gross)',
+        'unit': 'μmol CO₂/m²s',
+        'suitable_covariates': {
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Gross photosynthesis light response',
+                'interpretation': 'P_gross adjusted for light intensity'
+            },
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Stomatal effects on gross photosynthesis',
+                'interpretation': 'P_gross adjusted for VPD'
+            }
+        },
+        'default_covariate': 'absorbed_radiation',
+        'description': 'Total CO₂ fixation including respiration'
+    },
+    
+    'R_dark_estimate': {
+        'display_name': 'Dark Respiration (R_dark)',
+        'unit': 'μmol CO₂/m²s',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature dependence of respiration',
+                'interpretation': 'R_dark adjusted for temperature'
+            },
+            'air_temp': {
+                'display': 'Air Temperature',
+                'context': 'Temperature effects on respiration',
+                'interpretation': 'R_dark adjusted for air temperature'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Mitochondrial respiration rate derived from compensation point'
+    },
+    
+    'carboxylation_efficiency': {
+        'display_name': 'Carboxylation Efficiency (CE)',
+        'unit': 'μmol CO₂/mol air',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on Rubisco kinetics',
+                'interpretation': 'CE adjusted for leaf temperature'
+            },
+            'intercell_CO2_conc_in_gas_phase': {
+                'display': 'Intercellular CO₂ (C_i)',
+                'context': 'C_i dependence of carboxylation efficiency',
+                'interpretation': 'CE adjusted for C_i'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Photosynthetic efficiency at carboxylation sites'
+    },
+    
+    'V_cmax_approx': {
+        'display_name': 'V_cmax Approximation',
+        'unit': 'μmol CO₂/m²s',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on Rubisco maximum rate',
+                'interpretation': 'V_cmax adjusted for leaf temperature'
+            },
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Light limitation of V_cmax',
+                'interpretation': 'V_cmax adjusted for light availability'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Simplified Rubisco maximum carboxylation rate'
+    },
+    
+    'electron_transport_rate_approx': {
+        'display_name': 'Electron Transport Rate (J)',
+        'unit': 'μmol e⁻/m²s',
+        'suitable_covariates': {
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Light dependence of electron transport',
+                'interpretation': 'J adjusted for light intensity'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on electron transport',
+                'interpretation': 'J adjusted for temperature'
+            }
+        },
+        'default_covariate': 'absorbed_radiation',
+        'description': 'Simplified photosynthetic electron transport rate'
+    },
+    
+    # ===== STOMATAL CONDUCTANCE =====
+    'Stomatal_conductance_corrected': {
+        'display_name': 'Stomatal Conductance (g_s)',
+        'unit': 'mmol/m²s',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Stomatal closure in response to atmospheric drought',
+                'interpretation': 'g_s adjusted for VPD'
+            },
+            'CO2_M': {
+                'display': 'Ambient CO₂',
+                'context': 'CO₂-induced stomatal closure',
+                'interpretation': 'g_s adjusted for ambient CO₂'
+            },
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Light-induced stomatal opening',
+                'interpretation': 'g_s adjusted for light intensity'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on stomatal aperture',
+                'interpretation': 'g_s adjusted for temperature'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Temperature-corrected stomatal conductance for water vapor'
+    },
+    
+    'corr_stomatal_conductance': {
+        'display_name': 'Corrected Stomatal Conductance',
+        'unit': 'cm/s',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Stomatal response to atmospheric drought',
+                'interpretation': 'g_s corrected adjusted for VPD'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Mass-flow and temperature corrected stomatal conductance'
+    },
+    
+    'overall_conductance': {
+        'display_name': 'Overall Conductance (g_t)',
+        'unit': 'mmol/m²s',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Total conductance response to atmospheric drought',
+                'interpretation': 'g_t adjusted for VPD'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on total conductance',
+                'interpretation': 'g_t adjusted for temperature'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Total conductance including stomatal and boundary layer'
+    },
+    
+    'stomatal_sensitivity_vpd': {
+        'display_name': 'Stomatal Sensitivity to VPD',
+        'unit': 'mmol/m²s·kPa',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Nonlinear response of stomata to VPD',
+                'interpretation': 'Sensitivity adjusted for VPD range'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature modulation of VPD sensitivity',
+                'interpretation': 'Sensitivity adjusted for temperature'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Rate of stomatal conductance change per unit VPD'
+    },
+    
+    'stomatal_limitation': {
+        'display_name': 'Stomatal Limitation (L_s)',
+        'unit': 'dim-less',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD-induced stomatal limitation',
+                'interpretation': 'L_s adjusted for VPD'
+            },
+            'intercell_CO2_conc_in_gas_phase': {
+                'display': 'Intercellular CO₂ (C_i)',
+                'context': 'Stomatal vs biochemical limitation',
+                'interpretation': 'L_s adjusted for C_i'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Proportion of photosynthetic limitation due to stomata'
+    },
+    
+    # ===== TRANSPIRATION & WATER RELATIONS =====
+    'Transpiration_H2O_evol_rate': {
+        'display_name': 'Transpiration Rate (E)',
+        'unit': 'mmol/m²s',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Transpiration driven by VPD',
+                'interpretation': 'E adjusted for atmospheric drought'
+            },
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Stomatal control of transpiration',
+                'interpretation': 'E adjusted for stomatal opening'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Water loss through transpiration'
+    },
+    
+    'WUE': {
+        'display_name': 'Water Use Efficiency (WUE)',
+        'unit': 'μmol CO₂/mmol H₂O',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD effects on instantaneous WUE',
+                'interpretation': 'WUE adjusted for atmospheric drought'
+            },
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Stomatal effects on WUE',
+                'interpretation': 'WUE adjusted for stomatal opening'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Carbon gain per water loss (instantaneous)'
+    },
+    
+    'WUEi': {
+        'display_name': 'Intrinsic WUE (WUEᵢ)',
+        'unit': 'μmol CO₂/mol H₂O',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'Intrinsic WUE independent of VPD',
+                'interpretation': 'WUEᵢ adjusted for VPD'
+            },
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on intrinsic WUE',
+                'interpretation': 'WUEᵢ adjusted for temperature'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Photosynthesis per unit stomatal conductance'
+    },
+    
+    'WUE_gross': {
+        'display_name': 'Gross Water Use Efficiency',
+        'unit': 'μmol CO₂/mmol H₂O',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD effects on gross WUE',
+                'interpretation': 'WUE_gross adjusted for VPD'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Gross photosynthesis per unit transpiration'
+    },
+    
+    'WUEi_gross': {
+        'display_name': 'Gross Intrinsic WUE',
+        'unit': 'μmol CO₂/mol H₂O',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD effects on gross intrinsic WUE',
+                'interpretation': 'WUEi_gross adjusted for VPD'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Gross photosynthesis per unit stomatal conductance'
+    },
+    
+    'WUE_vcmax': {
+        'display_name': 'V_cmax-based WUE',
+        'unit': 'μmol CO₂/mmol H₂O',
+        'suitable_covariates': {
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD effects on biochemical WUE',
+                'interpretation': 'WUE_vcmax adjusted for VPD'
+            }
+        },
+        'default_covariate': 'VPD',
+        'description': 'Biochemical capacity-based water use efficiency'
+    },
+    
+    # ===== OZONE =====
+    'corr_stomatal_O3_uptake_rate': {
+        'display_name': 'Stomatal O₃ Uptake Rate',
+        'unit': 'nmol O₃/m²s',
+        'suitable_covariates': {
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Ozone flux depends on stomatal opening',
+                'interpretation': 'O₃ uptake adjusted for stomatal conductance'
+            },
+            'VPD': {
+                'display': 'Vapor Pressure Deficit',
+                'context': 'VPD effects on stomatal conductance and O₃ uptake',
+                'interpretation': 'O₃ uptake adjusted for VPD'
+            }
+        },
+        'default_covariate': 'Stomatal_conductance_corrected',
+        'description': 'Ozone flux through stomata'
+    },
+    
+    'corr_cumul_O3_dose': {
+        'display_name': 'Cumulative O₃ Dose',
+        'unit': 'μmol/m²',
+        'suitable_covariates': {
+            'corr_stomatal_O3_uptake_rate': {
+                'display': 'Stomatal O₃ Uptake Rate',
+                'context': 'Dose accumulation depends on uptake rate',
+                'interpretation': 'O₃ dose adjusted for uptake rate'
+            },
+            'time_repeated': {
+                'display': 'Time',
+                'context': 'Time-dependent dose accumulation',
+                'interpretation': 'O₃ dose adjusted for exposure time'
+            }
+        },
+        'default_covariate': 'corr_stomatal_O3_uptake_rate',
+        'description': 'Integrated ozone exposure over time'
+    },
+    
+    'ozone_sensitivity_index': {
+        'display_name': 'Ozone Sensitivity Index (OSI)',
+        'unit': 'nmol O₃/μmol CO₂',
+        'suitable_covariates': {
+            'CO2_exchange_rate': {
+                'display': 'Net Photosynthesis (A)',
+                'context': 'Ozone sensitivity relative to photosynthesis',
+                'interpretation': 'OSI adjusted for photosynthetic rate'
+            },
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Stomatal control of ozone sensitivity',
+                'interpretation': 'OSI adjusted for stomatal opening'
+            }
+        },
+        'default_covariate': 'CO2_exchange_rate',
+        'description': 'Ozone uptake normalized by photosynthesis'
+    },
+    
+    # ===== CO₂ DYNAMICS =====
+    'intercell_CO2_conc_in_gas_phase': {
+        'display_name': 'Intercellular CO₂ (C_i)',
+        'unit': 'μmol CO₂/mol air',
+        'suitable_covariates': {
+            'CO2_exchange_rate': {
+                'display': 'Net Photosynthesis (A)',
+                'context': 'C_i vs A relationship (A-C_i curve)',
+                'interpretation': 'C_i adjusted for photosynthetic rate'
+            },
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Stomatal control of C_i',
+                'interpretation': 'C_i adjusted for stomatal opening'
+            }
+        },
+        'default_covariate': 'CO2_exchange_rate',
+        'description': 'CO₂ concentration at carboxylation sites'
+    },
+    
+    'Ca_CI_gradient': {
+        'display_name': 'CO₂ Gradient (Ca - C_i)',
+        'unit': 'μmol CO₂/mol air',
+        'suitable_covariates': {
+            'CO2_exchange_rate': {
+                'display': 'Net Photosynthesis (A)',
+                'context': 'Gradient increases with photosynthetic rate',
+                'interpretation': 'Gradient adjusted for photosynthesis'
+            },
+            'Stomatal_conductance_corrected': {
+                'display': 'Stomatal Conductance (g_s)',
+                'context': 'Stomatal control of gradient',
+                'interpretation': 'Gradient adjusted for stomatal opening'
+            }
+        },
+        'default_covariate': 'CO2_exchange_rate',
+        'description': 'CO₂ concentration gradient driving diffusion'
+    },
+    
+    # ===== MESOPHYLL =====
+    'mesophyll_conductance_for_CO2': {
+        'display_name': 'Mesophyll Conductance (g_m)',
+        'unit': 'mmol/m²s',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on mesophyll conductance',
+                'interpretation': 'g_m adjusted for temperature'
+            },
+            'intercell_CO2_conc_in_gas_phase': {
+                'display': 'Intercellular CO₂ (C_i)',
+                'context': 'C_i dependence of mesophyll conductance',
+                'interpretation': 'g_m adjusted for C_i'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Conductance from intercellular space to chloroplasts'
+    },
+    
+    'CO2_comp_point': {
+        'display_name': 'CO₂ Compensation Point (Γ)',
+        'unit': 'μmol CO₂/mol air',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on compensation point',
+                'interpretation': 'Γ adjusted for temperature'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'CO₂ concentration where photosynthesis equals respiration'
+    },
+    
+    # ===== ENVIRONMENTAL =====
+    'VPD': {
+        'display_name': 'Vapor Pressure Deficit (VPD)',
+        'unit': 'kPa',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on VPD calculation',
+                'interpretation': 'VPD adjusted for leaf temperature'
+            },
+            'air_temp': {
+                'display': 'Air Temperature',
+                'context': 'Air temperature effects on VPD',
+                'interpretation': 'VPD adjusted for air temperature'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Atmospheric driving force for transpiration'
+    },
+    
+    'relative_air_humidity': {
+        'display_name': 'Relative Air Humidity',
+        'unit': '%',
+        'suitable_covariates': {
+            'leaf_temp_c': {
+                'display': 'Leaf Temperature',
+                'context': 'Temperature effects on humidity',
+                'interpretation': 'RH adjusted for leaf temperature'
+            }
+        },
+        'default_covariate': 'leaf_temp_c',
+        'description': 'Relative humidity of chamber air'
+    },
+    
+    'leaf_temp_c': {
+        'display_name': 'Leaf Temperature',
+        'unit': 'ºC',
+        'suitable_covariates': {
+            'absorbed_radiation': {
+                'display': 'Absorbed Radiation',
+                'context': 'Radiative heating of leaves',
+                'interpretation': 'T_leaf adjusted for absorbed radiation'
+            },
+            'Transpiration_H2O_evol_rate': {
+                'display': 'Transpiration Rate (E)',
+                'context': 'Transpirational cooling',
+                'interpretation': 'T_leaf adjusted for transpiration'
+            }
+        },
+        'default_covariate': 'absorbed_radiation',
+        'description': 'Estimated leaf temperature'
+    },
+    
+    # ===== TIME-BASED =====
+    'time_repeated': {
+        'display_name': 'Time',
+        'unit': 'min',
+        'suitable_covariates': {
+            'CO2_exchange_rate': {
+                'display': 'Net Photosynthesis (A)',
+                'context': 'Time-dependent photosynthetic decline',
+                'interpretation': 'Time adjusted for photosynthetic rate'
+            }
+        },
+        'default_covariate': 'CO2_exchange_rate',
+        'description': 'Repeated time points'
+    }
+}
+
+
+class ANCOVAAnalyzer:
+    """Complete ANCOVA analysis with full covariate-response mapping"""
+    
+    def __init__(self, parent_app):
+        self.parent = parent_app
+        self.analysis_results = {}
+        self.configs = ANCOVA_CONFIGS
+        self.recommended_pairs = self._generate_recommended_pairs()
+    
+    def _generate_recommended_pairs(self):
+        """Generate recommended covariate-response pairs for quick selection"""
+        pairs = []
+        for response, config in self.configs.items():
+            for covariate in config['suitable_covariates'].keys():
+                pairs.append({
+                    'response': response,
+                    'response_display': config['display_name'],
+                    'covariate': covariate,
+                    'covariate_display': config['suitable_covariates'][covariate]['display'],
+                    'context': config['suitable_covariates'][covariate]['context']
+                })
+        return pairs
+    
+    def get_suitable_covariates(self, response_var):
+        """Get list of suitable covariates for a given response variable"""
+        if response_var in self.configs:
+            return list(self.configs[response_var]['suitable_covariates'].keys())
+        return []
+    
+    def get_covariate_info(self, response_var, covariate_var):
+        """Get detailed information about a specific covariate-response pair"""
+        if response_var in self.configs:
+            if covariate_var in self.configs[response_var]['suitable_covariates']:
+                return self.configs[response_var]['suitable_covariates'][covariate_var]
+        return None
+    
+    def prepare_ancova_data(self, df, response_var, group_col='Channel', covariate_col='VPD'):
+        """
+        Prepare data for ANCOVA analysis with complete data validation
+        """
+        if df is None or len(df) == 0:
+            return None, {'error': 'No data provided'}
+    
+        validation_errors = []
+        validation_warnings = []
+    
+        # Check response variable
+        if response_var not in df.columns:
+            validation_errors.append(f"Response variable '{response_var}' not found in data")
+            return None, {'errors': validation_errors, 'warnings': validation_warnings}
+    
+        # Check covariate
+        if covariate_col not in df.columns:
+            validation_errors.append(f"Covariate '{covariate_col}' not found in data")
+            return None, {'errors': validation_errors, 'warnings': validation_warnings}
+    
+        # Check group column
+        if group_col not in df.columns:
+            validation_errors.append(f"Group column '{group_col}' not found in data")
+            return None, {'errors': validation_errors, 'warnings': validation_warnings}
+    
+        # Apply base name extraction
+        df_copy = df.copy()
+    
+        # IMPORTANT: Use the original Channel column for grouping
+        # but extract base names for display
+        if group_col == 'Channel':
+            # Extract base names (remove bracketed numbers like " (2)")
+            df_copy['group'] = df_copy[group_col].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
+        else:
+            df_copy['group'] = df_copy[group_col].astype(str)
+    
+        # Create analysis dataframe
+        analysis_df = pd.DataFrame({
+            'response': df_copy[response_var],
+            'group': df_copy['group'],
+            'covariate': df_copy[covariate_col]
+        })
+    
+        # Remove rows with NaN values
+        initial_rows = len(analysis_df)
+        analysis_df = analysis_df.dropna()
+        removed_rows = initial_rows - len(analysis_df)
+    
+        if removed_rows > 0:
+            validation_warnings.append(f"Removed {removed_rows} rows with missing values")
+    
+        # Check group sizes
+        group_counts = analysis_df.groupby('group').size()
+        small_groups = group_counts[group_counts < 3].index.tolist()
+        if small_groups:
+            validation_warnings.append(f"Groups with <3 observations: {small_groups}")
+            if any(group_counts < 2):
+                validation_errors.append(f"Groups with <2 observations: {[g for g in group_counts[group_counts < 2].index.tolist()]}")
+                return None, {'errors': validation_errors, 'warnings': validation_warnings}
+    
+        # Check for sufficient variation in covariate
+        covariate_std = analysis_df['covariate'].std()
+        if covariate_std < 1e-6:
+            validation_warnings.append("Covariate has near-zero variance - ANCOVA may not be meaningful")
+    
+        # Check for constant response within groups
+        for group in group_counts.index:
+            group_data = analysis_df[analysis_df['group'] == group]
+            if group_data['response'].std() < 1e-6:
+                validation_warnings.append(f"Group '{group}' has near-zero response variance")
+    
+        return analysis_df, {
+            'errors': validation_errors,
+            'warnings': validation_warnings,
+            'n_removed': removed_rows,
+            'group_counts': group_counts.to_dict()
+        }
+    
+    def test_homogeneity_of_slopes(self, analysis_df):
+        """
+        Test the homogeneity of regression slopes assumption (ANCOVA assumption)
+        """
+        try:
+            import statsmodels.api as sm
+            from statsmodels.formula.api import ols
+            
+            # Fit model with interaction term
+            model_interaction = ols('response ~ C(group) * covariate', data=analysis_df).fit()
+            anova_table = sm.stats.anova_lm(model_interaction, typ=2)
+            
+            # Extract interaction p-value
+            interaction_p = anova_table.loc['C(group):covariate', 'PR(>F)']
+            interaction_F = anova_table.loc['C(group):covariate', 'F']
+            interaction_df = anova_table.loc['C(group):covariate', 'df']
+            interaction_df_resid = anova_table.loc['Residual', 'df']
+            
+            slopes_homogeneous = interaction_p > 0.05
+            
+            # Also calculate within-group slopes for interpretation
+            group_slopes = {}
+            groups = analysis_df['group'].unique()
+            for group in groups:
+                group_data = analysis_df[analysis_df['group'] == group]
+                if len(group_data) >= 2:
+                    from scipy.stats import linregress
+                    slope, intercept, r_value, p_value, std_err = linregress(
+                        group_data['covariate'], group_data['response']
+                    )
+                    group_slopes[group] = {
+                        'slope': slope,
+                        'r_squared': r_value**2,
+                        'p_value': p_value,
+                        'std_err': std_err,
+                        'n': len(group_data)
+                    }
+            
+            return {
+                'p_value': interaction_p,
+                'F_statistic': interaction_F,
+                'df': interaction_df,
+                'df_residual': interaction_df_resid,
+                'slopes_homogeneous': slopes_homogeneous,
+                'group_slopes': group_slopes,
+                'interpretation': 'Slopes are homogeneous (assumption met)' if slopes_homogeneous 
+                                 else 'Slopes differ significantly (assumption violated)',
+                'note': "If slopes are not homogeneous, consider using ANCOVA with interaction or separate group analyses"
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    def generate_ancova_diagnostic_plots(self, results, df, metric, palette='tab10'):
+        """Generate diagnostic plots for ANCOVA analysis."""
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import scipy.stats as stats
+        from statsmodels.graphics.factorplots import interaction_plot
+
+        # ============ CHECK FOR VALID RESULTS ============
+        if 'error' in results:
+            fig, ax = plt.subplots(figsize=(12, 8))
+            error_msg = results.get('error', 'Unknown error')
+            recommendation = results.get('recommendation', '')
+            message = f"ANCOVA Analysis Failed\n\nError: {error_msg}\n\n"
+            if recommendation:
+                message += f"Recommendation: {recommendation}\n\n"
+            message += "Possible solutions:\n  1. Check that the covariate has variation across time points\n"
+            message += "  2. Try a different covariate (e.g., VPD, leaf_temp_c)\n"
+            message += "  3. Use ANOVA instead of ANCOVA\n"
+            message += "  4. Check that data is correctly loaded from the mapping file"
+            ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=12, 
+                    transform=ax.transAxes,
+                    bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.9))
+            ax.set_axis_off()
+            return fig
+
+        # ============ GET ANALYSIS_DF FROM RESULTS ============
+        # First try to get analysis_df from results
+        analysis_df = results.get('_analysis_df')
+    
+        # If not available, try to recreate it
+        if analysis_df is None or len(analysis_df) == 0:
+            response_var = results.get('response_var')
+            covariate_var = results.get('covariate_var')
+        
+            if response_var and covariate_var and response_var in df.columns and covariate_var in df.columns:
+                # Create analysis_df from the provided data
+                df_copy = df.copy()
+                # Extract base names from Channel
+                df_copy['group'] = df_copy['Channel'].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
+            
+                analysis_df = pd.DataFrame({
+                    'response': df_copy[response_var],
+                    'group': df_copy['group'],
+                    'covariate': df_copy[covariate_var]
+                }).dropna()
+            
+                # Store for future use
+                results['_analysis_df'] = analysis_df
+                print(f"Recreated analysis_df with {len(analysis_df)} rows")
+            else:
+                # Try to use the groups from results
+                groups = results.get('groups', [])
+                if groups:
+                    # Create a minimal analysis_df from results
+                    analysis_df = pd.DataFrame({
+                        'group': groups
+                    })
+                    # Add dummy data for plotting
+                    analysis_df['response'] = 0
+                    analysis_df['covariate'] = 0
+                    print(f"Created minimal analysis_df with {len(analysis_df)} rows")
+
+        # ============ CHECK MODEL ============
+        model = results.get('_model')
+        if model is None:
+            fig, ax = plt.subplots(figsize=(12, 8))
+            ax.text(0.5, 0.5, 'No valid ANCOVA model available for diagnostic plots\n\nTry running the analysis again.', 
+                    ha='center', va='center', fontsize=12)
+            ax.set_axis_off()
+            return fig
+
+        # Get residuals and fitted values
+        resid = model.resid
+        fitted = model.fittedvalues
+
+        # ============ HELPER FUNCTION FOR COLORS ============
+        def get_palette_colors(n_colors):
+            try:
+                if palette in colorblind_friendly_palettes:
+                    if isinstance(colorblind_friendly_palettes[palette], list):
+                        color_list = colorblind_friendly_palettes[palette]
+                        colors = [color_list[i % len(color_list)] for i in range(n_colors)]
+                    else:
+                        cmap = colorblind_friendly_palettes[palette]
+                        colors = cmap(np.linspace(0, 1, n_colors))
+                elif palette in plt.colormaps():
+                    cmap = plt.get_cmap(palette)
+                    colors = cmap(np.linspace(0, 1, n_colors))
+                else:
+                    colors = plt.cm.tab10(np.linspace(0, 1, n_colors))
+                return colors
+            except Exception as e:
+                return plt.cm.tab10(np.linspace(0, 1, n_colors))
+
+        # ============ CREATE FIGURE ============
+        fig, axes = plt.subplots(3, 2, figsize=(16, 18))
+        fig.suptitle(f'ANCOVA Diagnostic Plots - {results.get("response_var", "Unknown")}', 
+                     fontsize=16, fontweight='bold')
+
+        # 1. Residuals vs Fitted
+        ax1 = axes[0, 0]
+        ax1.scatter(fitted, resid, alpha=0.6, s=30, color=get_palette_colors(1)[0])
+        ax1.axhline(0, color='red', linestyle='--', linewidth=2)
+        ax1.set_xlabel('Fitted Values')
+        ax1.set_ylabel('Residuals')
+        ax1.set_title('Residuals vs Fitted')
+        ax1.grid(True, alpha=0.3)
+
+        if len(fitted) > 10:
+            try:
+                from statsmodels.nonparametric.smoothers_lowess import lowess
+                lowess_result = lowess(resid, fitted, frac=0.6, it=3)
+                ax1.plot(lowess_result[:, 0], lowess_result[:, 1], 
+                        color='blue', linewidth=2, label='LOWESS')
+                ax1.legend()
+            except:
+                pass
+
+        # 2. Q-Q Plot
+        ax2 = axes[0, 1]
+        stats.probplot(resid, dist='norm', plot=ax2)
+        ax2.set_title('Q-Q Plot of Residuals')
+        ax2.grid(True, alpha=0.3)
+
+        if len(resid) >= 3 and len(resid) <= 5000:
+            try:
+                shapiro_stat, shapiro_p = stats.shapiro(resid)
+                ax2.annotate(f'Shapiro-Wilk p = {shapiro_p:.4f}',
+                            xy=(0.05, 0.95), xycoords='axes fraction',
+                            fontsize=10, bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+                if shapiro_p < 0.05:
+                    ax2.annotate(' Residuals deviate from normality',
+                                xy=(0.05, 0.88), xycoords='axes fraction',
+                                fontsize=10, color='red')
+            except:
+                pass
+
+        # 3. Scale-Location Plot
+        ax3 = axes[1, 0]
+        sqrt_abs_resid = np.sqrt(np.abs(resid))
+        ax3.scatter(fitted, sqrt_abs_resid, alpha=0.6, s=30, color=get_palette_colors(1)[0])
+        ax3.axhline(y=np.mean(sqrt_abs_resid), color='red', linestyle='--', linewidth=2)
+        ax3.set_xlabel('Fitted Values')
+        ax3.set_ylabel('√|Residuals|')
+        ax3.set_title('Scale-Location Plot')
+        ax3.grid(True, alpha=0.3)
+
+        if len(fitted) > 10:
+            try:
+                from statsmodels.nonparametric.smoothers_lowess import lowess
+                lowess_result = lowess(sqrt_abs_resid, fitted, frac=0.6, it=3)
+                ax3.plot(lowess_result[:, 0], lowess_result[:, 1], 
+                        color='blue', linewidth=2, label='LOWESS')
+                ax3.legend()
+            except:
+                pass
+
+        # 4. Residuals by Group (Channel) - FIXED
+        ax4 = axes[1, 1]
+    
+        # Check if analysis_df has the 'group' column
+        if analysis_df is not None and 'group' in analysis_df.columns and len(analysis_df) > 0:
+            groups = analysis_df['group'].unique()
+            resid_by_group = []
+            group_labels = []
+        
+            # Match residuals to groups
+            # Ensure we have the same length
+            if len(resid) == len(analysis_df):
+                for g in groups:
+                    mask = analysis_df['group'] == g
+                    if mask.any():
+                        resid_by_group.append(resid[mask])
+                        group_labels.append(str(g))
+            else:
+                # Fallback: use the groups from results
+                groups_from_results = results.get('groups', [])
+                for g in groups_from_results:
+                    # Try to find matching rows
+                    if g in analysis_df['group'].values:
+                        mask = analysis_df['group'] == g
+                        if mask.any():
+                            # Need to align indices
+                            try:
+                                # Get indices for this group
+                                group_indices = analysis_df[mask].index
+                                # Get residuals for these indices
+                                group_resid = [resid[i] for i in group_indices if i < len(resid)]
+                                if group_resid:
+                                    resid_by_group.append(np.array(group_resid))
+                                    group_labels.append(str(g))
+                            except:
+                                pass
+        
+            if resid_by_group:
+                import matplotlib
+                try:
+                    bp = ax4.boxplot(resid_by_group, tick_labels=group_labels, patch_artist=True)
+                except TypeError:
+                    bp = ax4.boxplot(resid_by_group, labels=group_labels, patch_artist=True)
+            
+                box_colors = get_palette_colors(len(group_labels))
+                for i, box in enumerate(bp['boxes']):
+                    box.set_facecolor(box_colors[i % len(box_colors)])
+                    box.set_alpha(0.7)
+            
+                ax4.axhline(0, color='red', linestyle='--', linewidth=1, alpha=0.5)
+                ax4.set_title('Residuals by Group (Channel)')
+                ax4.set_xlabel('Group')
+                ax4.set_ylabel('Residuals')
+                ax4.set_xticklabels(group_labels, rotation=45, ha='right')
+                ax4.grid(True, alpha=0.3, axis='y')
+            else:
+                ax4.text(0.5, 0.5, 'Not enough data per group', ha='center', va='center')
+                ax4.set_title('Residuals by Group - Insufficient Data')
+        else:
+            # Try to use groups from results
+            groups_from_results = results.get('groups', [])
+            if groups_from_results:
+                # Create a simple display showing the groups
+                ax4.text(0.5, 0.5, f'Groups: {", ".join(groups_from_results)}\n\nUse ANOVA tab for detailed analysis', 
+                        ha='center', va='center', fontsize=10)
+                ax4.set_title('Residuals by Group - Available Groups')
+            else:
+                ax4.text(0.5, 0.5, 'Group column not found', ha='center', va='center')
+                ax4.set_title('Residuals by Group - Not Available')
+
+        # 5. Cook's Distance
+        ax5 = axes[2, 0]
+        cooks_available = False
+
+        if hasattr(model, 'model') and hasattr(model.model, 'exog'):
+            try:
+                from statsmodels.stats.outliers_influence import OLSInfluence
+                influence = OLSInfluence(model)
+                cooks_d = influence.cooks_distance[0]
+            
+                if len(cooks_d) > 0 and not np.all(np.isnan(cooks_d)):
+                    cooks_available = True
+                    n = len(cooks_d)
+                    k = len(model.params) - 1
+                    threshold = 4 / (n - k - 1) if (n - k - 1) > 0 else 1.0
+                
+                    ax5.bar(range(len(cooks_d)), cooks_d, color='steelblue', alpha=0.7)
+                    ax5.axhline(y=threshold, color='red', linestyle='--', 
+                               linewidth=2, label=f'Threshold = {threshold:.3f}')
+                    ax5.set_title("Cook's Distance")
+                    ax5.set_xlabel('Observation Index')
+                    ax5.set_ylabel("Cook's Distance")
+                    ax5.legend(loc='upper right')
+                    ax5.grid(True, alpha=0.3)
+                
+                    n_influential = sum(d > threshold for d in cooks_d)
+                    ax5.annotate(f'{n_influential} influential points', 
+                                xy=(0.05, 0.95), xycoords='axes fraction',
+                                fontsize=10, bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+            except:
+                pass
+
+        if not cooks_available:
+            ax5.text(0.5, 0.5, "Cook's Distance\nnot available", ha='center', va='center', fontsize=12)
+            ax5.set_title("Cook's Distance (Not Available)")
+
+        # 6. Effect Size Visualization - FIXED
+        ax6 = axes[2, 1]
+
+        # Get effect sizes from results
+        effect_size = results.get('effect_size', {})
+        ancova = results.get('ancova', {})
+
+        # Debug: Print what we have
+        print(f"Effect size data: {effect_size}")
+        print(f"ANCOVA data keys: {list(ancova.keys()) if ancova else 'None'}")
+
+        # Try to get effect sizes from multiple sources
+        group_es = 0
+        cov_es = 0
+        group_interp = 'N/A'
+        cov_interp = 'N/A'
+
+        # Source 1: Direct from effect_size
+        if effect_size:
+            group_es = effect_size.get('partial_eta_sq_group', 0)
+            cov_es = effect_size.get('partial_eta_sq_covariate', 0)
+            group_interp = effect_size.get('group_interpretation', 'N/A')
+            cov_interp = effect_size.get('covariate_interpretation', 'N/A')
+            print(f"From effect_size: group_es={group_es}, cov_es={cov_es}")
+
+        # Source 2: Calculate from ANCOVA table if available
+        if group_es == 0 and cov_es == 0 and ancova:
+            group_effect = ancova.get('group_effect', {})
+            cov_effect = ancova.get('covariate_effect', {})
+            residual = ancova.get('residual', {})
+    
+            group_ss = group_effect.get('ss', 0)
+            cov_ss = cov_effect.get('ss', 0)
+            residual_ss = residual.get('ss', 1)  # Avoid division by zero
+    
+            if group_ss > 0 and residual_ss > 0:
+                group_es = group_ss / (group_ss + residual_ss)
+                group_interp = self._interpret_effect_size(group_es)
+                print(f"Calculated from ANCOVA: group_es={group_es}")
+    
+            if cov_ss > 0 and residual_ss > 0:
+                cov_es = cov_ss / (cov_ss + residual_ss)
+                cov_interp = self._interpret_effect_size(cov_es)
+                print(f"Calculated from ANCOVA: cov_es={cov_es}")
+
+        # Source 3: For interaction models, calculate from F-statistics
+        if group_es == 0 and cov_es == 0 and ancova:
+            # Check if this is an interaction model
+            model_type = ancova.get('model_type', '')
+            is_interaction = 'interaction' in model_type.lower()
+    
+            if is_interaction:
+                group_effect = ancova.get('group_effect', {})
+                cov_effect = ancova.get('covariate_effect', {})
+                int_effect = ancova.get('interaction_effect', {})
+        
+                # Get F-statistics and degrees of freedom
+                group_F = group_effect.get('F_statistic', 0)
+                group_df = group_effect.get('df', 0)
+                df_resid = group_effect.get('df_residual', 1)
+        
+                if group_F > 0 and group_df > 0 and df_resid > 0:
+                    # η²ₚ = (F * df_effect) / (F * df_effect + df_error)
+                    group_es = (group_F * group_df) / (group_F * group_df + df_resid)
+                    group_interp = self._interpret_effect_size(group_es)
+                    print(f"Calculated from interaction F: group_es={group_es}")
+        
+                cov_F = cov_effect.get('F_statistic', 0)
+                cov_df = cov_effect.get('df', 0)
+        
+                if cov_F > 0 and cov_df > 0 and df_resid > 0:
+                    cov_es = (cov_F * cov_df) / (cov_F * cov_df + df_resid)
+                    cov_interp = self._interpret_effect_size(cov_es)
+                    print(f"Calculated from interaction F: cov_es={cov_es}")
+
+        # Create the bar chart
+        if group_es > 0 or cov_es > 0:
+            categories = []
+            values = []
+            colors = []
+            interpretations = []
+    
+            def interpret_effect_size(eta_sq):
+                if eta_sq >= 0.14:
+                    return 'large'
+                elif eta_sq >= 0.06:
+                    return 'medium'
+                elif eta_sq >= 0.01:
+                    return 'small'
+                else:
+                    return 'very small'
+    
+            if group_es > 0:
+                categories.append('Group')
+                values.append(group_es)
+                interp = group_interp if group_interp != 'N/A' else interpret_effect_size(group_es)
+                interpretations.append(interp)
+                if group_es >= 0.14:
+                    colors.append('darkgreen')
+                elif group_es >= 0.06:
+                    colors.append('orange')
+                elif group_es >= 0.01:
+                    colors.append('gold')
+                else:
+                    colors.append('lightgray')
+    
+            if cov_es > 0:
+                categories.append('Covariate')
+                values.append(cov_es)
+                interp = cov_interp if cov_interp != 'N/A' else interpret_effect_size(cov_es)
+                interpretations.append(interp)
+                if cov_es >= 0.14:
+                    colors.append('darkgreen')
+                elif cov_es >= 0.06:
+                    colors.append('orange')
+                elif cov_es >= 0.01:
+                    colors.append('gold')
+                else:
+                    colors.append('lightgray')
+    
+            if categories:
+                x_pos = np.arange(len(categories))
+                bars = ax6.bar(x_pos, values, color=colors, alpha=0.7, width=0.5)
+        
+                ax6.set_title('Effect Sizes (Partial η²)', fontsize=11)
+                ax6.set_ylabel('Partial Eta-squared')
+                ax6.set_xticks(x_pos)
+                ax6.set_xticklabels(categories, fontsize=10)
+                ax6.set_ylim(0, max(1.0, max(values) * 1.3))
+                ax6.grid(True, alpha=0.3, axis='y')
+        
+                # Add value labels and interpretations
+                for i, (val, interp) in enumerate(zip(values, interpretations)):
+                    ax6.text(i, val + 0.02, f'{val:.3f}', 
+                            ha='center', va='bottom', fontsize=10, fontweight='bold')
+                    ax6.text(i, val/2, interp.capitalize(), 
+                            ha='center', va='center', fontsize=9, color='white', fontweight='bold')
+        
+                # Add reference lines
+                ax6.axhline(y=0.01, color='gray', linestyle=':', alpha=0.5, label='Small (0.01)')
+                ax6.axhline(y=0.06, color='gray', linestyle=':', alpha=0.5, label='Medium (0.06)')
+                ax6.axhline(y=0.14, color='gray', linestyle=':', alpha=0.5, label='Large (0.14)')
+                ax6.legend(fontsize=8, loc='upper right')
+            else:
+                ax6.text(0.5, 0.5, 'Effect sizes not available', 
+                        ha='center', va='center', fontsize=12)
+                ax6.set_title('Effect Sizes (Not Available)')
+        else:
+            # Show a more informative message
+            ax6.text(0.5, 0.5, 'Effect sizes not available\n\nPossible reasons:\n- ANCOVA model did not converge\n- No variance explained by factors\n- Try running analysis again', 
+                    ha='center', va='center', fontsize=11)
+            ax6.set_title('Effect Sizes (Not Available)')
+
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.95, wspace=0.3, hspace=0.4)
+
+        return fig
+    
+    def run_ancova(self, df, response_var='CO2_exchange_rate', 
+               group_col='Channel', covariate_col='VPD', alpha=0.05):
+        """
+        Run complete ANCOVA analysis with full results
+        """
+        # Prepare data with validation
+        analysis_df, validation = self.prepare_ancova_data(df, response_var, group_col, covariate_col)
+        if analysis_df is None:
+            return {
+                'error': 'Data preparation failed',
+                'validation': validation,
+                'response_var': response_var,
+                'covariate_var': covariate_col
+            }
+    
+        # Check if we have at least 2 groups
+        groups = analysis_df['group'].unique()
+        if len(groups) < 2:
+            return {
+                'error': f'Need at least 2 groups for ANCOVA, found {len(groups)}',
+                'validation': validation,
+                'response_var': response_var,
+                'covariate_var': covariate_col
+            }
+    
+        # CHECK: Is the covariate actually varying?
+        covariate_std = analysis_df['covariate'].std()
+        if covariate_std < 1e-6:
+            # The covariate has no variation - ANCOVA is not meaningful
+            # Return a warning and use ANOVA instead
+            return {
+                'error': 'Covariate has no variation - ANCOVA is not meaningful',
+                'validation': validation,
+                'response_var': response_var,
+                'covariate_var': covariate_col,
+                'recommendation': 'Use ANOVA instead of ANCOVA for this data'
+            }
+        
+        # Initialize results
+        results = {
+            'response_var': response_var,
+            'response_info': self.configs.get(response_var, {}),
+            'covariate_var': covariate_col,
+            'covariate_info': self.get_covariate_info(response_var, covariate_col),
+            'group_var': group_col,
+            'n_observations': len(analysis_df),
+            'n_groups': len(groups),
+            'groups': list(groups),
+            'validation': validation,
+            'sample_sizes': {},
+            'descriptive_stats': {},
+            'covariate_stats': {},
+            'homogeneity_slopes': {},
+            'ancova': {},
+            'adjusted_means': {},
+            'effect_size': {},
+            'posthoc': {},
+            'assumptions': {},
+            'model_diagnostics': {}
+        }
+        
+        # 1. Descriptive statistics by group
+        for g in groups:
+            group_data = analysis_df[analysis_df['group'] == g]
+            results['sample_sizes'][g] = len(group_data)
+            results['descriptive_stats'][g] = {
+                'mean_response': group_data['response'].mean(),
+                'std_response': group_data['response'].std(),
+                'mean_covariate': group_data['covariate'].mean(),
+                'std_covariate': group_data['covariate'].std(),
+                'correlation': group_data['response'].corr(group_data['covariate']),
+                'min_response': group_data['response'].min(),
+                'max_response': group_data['response'].max(),
+                'min_covariate': group_data['covariate'].min(),
+                'max_covariate': group_data['covariate'].max(),
+                'n': len(group_data)
+            }
+        
+        # 2. Overall covariate statistics
+        results['covariate_stats'] = {
+            'overall_mean': analysis_df['covariate'].mean(),
+            'overall_std': analysis_df['covariate'].std(),
+            'range': (analysis_df['covariate'].min(), analysis_df['covariate'].max()),
+            'overall_correlation': analysis_df['response'].corr(analysis_df['covariate'])
+        }
+        
+        # 3. Test homogeneity of slopes
+        slopes_test = self.test_homogeneity_of_slopes(analysis_df)
+        results['homogeneity_slopes'] = slopes_test
+        
+        # Check if slopes are homogeneous
+        if 'slopes_homogeneous' in slopes_test and not slopes_test['slopes_homogeneous']:
+            results['assumptions']['homogeneous_slopes'] = False
+            results['assumptions']['warning'] = "Slopes are not homogeneous - consider using ANCOVA with interaction"
+        else:
+            results['assumptions']['homogeneous_slopes'] = True
+        
+        # 4. Run ANCOVA
+        try:
+            import statsmodels.api as sm
+            from statsmodels.formula.api import ols
+            
+            if slopes_test.get('slopes_homogeneous', True):
+                # Standard ANCOVA: response ~ group + covariate
+                model = ols('response ~ C(group) + covariate', data=analysis_df).fit()
+                anova_table = sm.stats.anova_lm(model, typ=2)
+                
+                # Extract results
+                group_ss = anova_table.loc['C(group)', 'sum_sq']
+                group_df = anova_table.loc['C(group)', 'df']
+                group_F = anova_table.loc['C(group)', 'F']
+                group_p = anova_table.loc['C(group)', 'PR(>F)']
+                
+                covariate_ss = anova_table.loc['covariate', 'sum_sq']
+                covariate_df = anova_table.loc['covariate', 'df']
+                covariate_F = anova_table.loc['covariate', 'F']
+                covariate_p = anova_table.loc['covariate', 'PR(>F)']
+                
+                residual_ss = anova_table.loc['Residual', 'sum_sq']
+                residual_df = anova_table.loc['Residual', 'df']
+                
+                total_ss = group_ss + covariate_ss + residual_ss
+                
+                # Get coefficients
+                coeffs = model.params
+                coeff_se = model.bse
+                coeff_p = model.pvalues
+                
+                # Build coefficient list
+                coefficients = []
+                for param, value in coeffs.items():
+                    if param == 'Intercept':
+                        coefficients.append({
+                            'name': 'Intercept',
+                            'value': value,
+                            'se': coeff_se[param],
+                            'pvalue': coeff_p[param],
+                            'significant': coeff_p[param] < alpha
+                        })
+                    elif param == 'covariate':
+                        coefficients.append({
+                            'name': f'Slope ({covariate_col})',
+                            'value': value,
+                            'se': coeff_se[param],
+                            'pvalue': coeff_p[param],
+                            'significant': coeff_p[param] < alpha
+                        })
+                    elif param.startswith('C(group)[T.'):
+                        group_name = param.split('.')[1].rstrip(']')
+                        coefficients.append({
+                            'name': f'Group: {group_name} vs {groups[0]}',
+                            'value': value,
+                            'se': coeff_se[param],
+                            'pvalue': coeff_p[param],
+                            'significant': coeff_p[param] < alpha
+                        })
+                
+                results['ancova'] = {
+                    'model_type': 'Standard ANCOVA (parallel slopes)',
+                    'coefficients': coefficients,
+                    'group_effect': {
+                        'F_statistic': group_F,
+                        'p_value': group_p,
+                        'df': group_df,
+                        'df_residual': residual_df,
+                        'ss': group_ss,
+                        'significant': group_p < alpha,
+                        'interpretation': 'Groups differ significantly after controlling for covariate' if group_p < alpha 
+                                         else 'No significant group differences after controlling for covariate'
+                    },
+                    'covariate_effect': {
+                        'F_statistic': covariate_F,
+                        'p_value': covariate_p,
+                        'df': covariate_df,
+                        'df_residual': residual_df,
+                        'ss': covariate_ss,
+                        'significant': covariate_p < alpha,
+                        'interpretation': 'Covariate significantly predicts response' if covariate_p < alpha 
+                                         else 'Covariate does not significantly predict response'
+                    },
+                    'residual': {
+                        'ss': residual_ss,
+                        'df': residual_df
+                    },
+                    'total_ss': total_ss,
+                    'r_squared': model.rsquared,
+                    'adj_r_squared': model.rsquared_adj
+                }
+                
+                # Calculate effect size (partial eta-squared)
+                eta_sq_group = group_ss / (group_ss + residual_ss) if (group_ss + residual_ss) > 0 else 0
+                eta_sq_covariate = covariate_ss / (covariate_ss + residual_ss) if (covariate_ss + residual_ss) > 0 else 0
+                
+                results['effect_size'] = {
+                    'partial_eta_sq_group': eta_sq_group,
+                    'partial_eta_sq_covariate': eta_sq_covariate,
+                    'group_interpretation': self._interpret_effect_size(eta_sq_group),
+                    'covariate_interpretation': self._interpret_effect_size(eta_sq_covariate)
+                }
+                
+            else:
+                # ANCOVA with interaction (slopes differ)
+                model = ols('response ~ C(group) + covariate + C(group):covariate', data=analysis_df).fit()
+                anova_table = sm.stats.anova_lm(model, typ=2)
+                
+                results['ancova'] = {
+                    'model_type': 'ANCOVA with interaction (slopes differ by group)',
+                    'note': 'Slopes are not homogeneous - interaction term included',
+                    'group_effect': {
+                        'F_statistic': anova_table.loc['C(group)', 'F'],
+                        'p_value': anova_table.loc['C(group)', 'PR(>F)'],
+                        'df': anova_table.loc['C(group)', 'df'],
+                        'df_residual': anova_table.loc['Residual', 'df'],
+                        'significant': anova_table.loc['C(group)', 'PR(>F)'] < alpha
+                    },
+                    'covariate_effect': {
+                        'F_statistic': anova_table.loc['covariate', 'F'],
+                        'p_value': anova_table.loc['covariate', 'PR(>F)'],
+                        'df': anova_table.loc['covariate', 'df'],
+                        'significant': anova_table.loc['covariate', 'PR(>F)'] < alpha
+                    },
+                    'interaction_effect': {
+                        'F_statistic': anova_table.loc['C(group):covariate', 'F'],
+                        'p_value': anova_table.loc['C(group):covariate', 'PR(>F)'],
+                        'df': anova_table.loc['C(group):covariate', 'df'],
+                        'significant': anova_table.loc['C(group):covariate', 'PR(>F)'] < alpha,
+                        'interpretation': 'Slopes differ significantly between groups'
+                    },
+                    'r_squared': model.rsquared,
+                    'adj_r_squared': model.rsquared_adj
+                }
+            
+            # 5. Calculate adjusted means
+            if model is not None:
+                adjusted_means = self.calculate_adjusted_means(model, analysis_df)
+                results['adjusted_means'] = adjusted_means
+            
+            # 6. Post-hoc comparisons on adjusted means
+            if 'adjusted_means' in results and len(groups) >= 2:
+                try:
+                    posthoc_results = self.run_posthoc_on_adjusted_means(
+                        analysis_df, model, alpha
+                    )
+                    results['posthoc'] = posthoc_results
+                except Exception as e:
+                    results['posthoc'] = {'error': str(e)}
+            
+            # 7. Store model for diagnostics
+            results['_model'] = model
+            
+        except Exception as e:
+            results['ancova'] = {'error': str(e)}
+            traceback.print_exc()
+        
+        # 8. Model diagnostics
+        try:
+            if 'model' in locals() and model is not None and hasattr(model, 'resid'):
+                resid = model.resid
+                fitted = model.fittedvalues
+                
+                # Shapiro-Wilk test for normality
+                if len(resid) >= 3 and len(resid) <= 5000:
+                    from scipy.stats import shapiro
+                    shapiro_stat, shapiro_p = shapiro(resid)
+                    results['model_diagnostics']['shapiro_wilk'] = {
+                        'statistic': shapiro_stat,
+                        'p_value': shapiro_p,
+                        'normal': shapiro_p > alpha,
+                        'n': len(resid)
+                    }
+                    results['assumptions']['normality'] = shapiro_p > alpha
+                else:
+                    results['assumptions']['normality'] = False
+                
+                # Breusch-Pagan test for heteroscedasticity
+                try:
+                    from statsmodels.stats.diagnostic import het_breuschpagan
+                    X = model.model.exog
+                    if X is not None and len(X) > 0 and len(X) == len(resid):
+                        bp_test = het_breuschpagan(resid, X)
+                        results['model_diagnostics']['breusch_pagan'] = {
+                            'lm_statistic': bp_test[0],
+                            'p_value': bp_test[1],
+                            'homoscedastic': bp_test[1] > alpha
+                        }
+                        results['assumptions']['homoscedasticity'] = bp_test[1] > alpha
+                except Exception as e:
+                    results['model_diagnostics']['breusch_pagan'] = {'error': str(e)}
+                    results['assumptions']['homoscedasticity'] = False
+                
+                # Durbin-Watson for autocorrelation
+                try:
+                    from statsmodels.stats.stattools import durbin_watson
+                    dw = durbin_watson(resid)
+                    results['model_diagnostics']['durbin_watson'] = {
+                        'statistic': dw,
+                        'interpretation': 'No significant autocorrelation' if 1.5 < dw < 2.5 else 'Possible autocorrelation'
+                    }
+                except Exception as e:
+                    pass
+                
+        except Exception as e:
+            results['model_diagnostics'] = {'error': str(e)}
+        
+        # 9. Recommendations
+        results['recommendations'] = self._generate_ancova_recommendations(results, alpha)
+        
+        return results
+    
+    def calculate_adjusted_means(self, model, analysis_df):
+        """
+        Calculate adjusted (least squares) means for each group
+        at the grand mean of the covariate with standard errors
+        """
+        try:
+            import statsmodels.api as sm
+            import numpy as np
+            
+            # Get the grand mean of the covariate
+            grand_mean_covariate = analysis_df['covariate'].mean()
+            
+            # Get group-specific intercepts and covariate coefficient
+            groups = analysis_df['group'].unique()
+            adjusted_means = {}
+            
+            # Get model parameters
+            params = model.params
+            cov_matrix = model.cov_params()
+            
+            # Extract covariate coefficient
+            covariate_name = 'covariate'
+            if covariate_name in params.index:
+                covariate_coef = params[covariate_name]
+                covariate_se = np.sqrt(cov_matrix.loc[covariate_name, covariate_name])
+            else:
+                covariate_coef = 0
+                covariate_se = 0
+            
+            # Calculate adjusted means for each group
+            for group in groups:
+                # Get group-specific intercept
+                group_term = f'C(group)[T.{group}]' if group != groups[0] else 'Intercept'
+                
+                if group == groups[0]:
+                    intercept = params['Intercept']
+                    intercept_se = np.sqrt(cov_matrix.loc['Intercept', 'Intercept'])
+                elif group_term in params.index:
+                    intercept = params['Intercept'] + params[group_term]
+                    # Standard error of intercept + group effect
+                    var_sum = (cov_matrix.loc['Intercept', 'Intercept'] + 
+                              cov_matrix.loc[group_term, group_term] +
+                              2 * cov_matrix.loc['Intercept', group_term] if group_term in cov_matrix.columns else 0)
+                    intercept_se = np.sqrt(var_sum) if var_sum > 0 else 0
+                else:
+                    # Fallback: use group mean
+                    group_data = analysis_df[analysis_df['group'] == group]
+                    intercept = group_data['response'].mean() - covariate_coef * group_data['covariate'].mean()
+                    intercept_se = group_data['response'].std() / np.sqrt(len(group_data))
+                
+                # Calculate adjusted mean at grand mean covariate
+                adjusted_mean = intercept + covariate_coef * grand_mean_covariate
+                
+                # Calculate standard error of adjusted mean
+                # SE = sqrt(Var(intercept) + (grand_mean_covariate)^2 * Var(slope) + 2*grand_mean_covariate*Cov(intercept,slope))
+                var_adj = intercept_se**2 + (grand_mean_covariate**2) * (covariate_se**2)
+                if group != groups[0] and group_term in cov_matrix.columns:
+                    var_adj += 2 * grand_mean_covariate * cov_matrix.loc['Intercept', covariate_name]
+                se_adj = np.sqrt(var_adj) if var_adj > 0 else 0
+                
+                adjusted_means[group] = {
+                    'adjusted_mean': adjusted_mean,
+                    'se': se_adj,
+                    'n': len(analysis_df[analysis_df['group'] == group]),
+                    'covariate_grand_mean': grand_mean_covariate,
+                    'intercept': intercept,
+                    'slope': covariate_coef
+                }
+            
+            return adjusted_means
+            
+        except Exception as e:
+            print(f"Error calculating adjusted means: {e}")
+            traceback.print_exc()
+            return {'error': str(e)}
+    
+    def run_posthoc_on_adjusted_means(self, analysis_df, model, alpha=0.05):
+        """Run post-hoc comparisons on adjusted means"""
+        try:
+            from statsmodels.stats.multicomp import pairwise_tukeyhsd
+            import numpy as np
+            
+            # Get fitted values (adjusted means for each observation)
+            fitted_values = model.fittedvalues
+            
+            # Create a dataframe with group and fitted values
+            posthoc_df = pd.DataFrame({
+                'group': analysis_df['group'],
+                'adjusted_value': fitted_values
+            })
+            
+            # Ensure we have enough data for post-hoc
+            group_counts = posthoc_df.groupby('group').size()
+            if any(group_counts < 2):
+                return {
+                    'error': f'Insufficient group sizes for post-hoc: {group_counts.to_dict()}'
+                }
+            
+            # Run Tukey HSD on adjusted values
+            tukey_result = pairwise_tukeyhsd(
+                endog=posthoc_df['adjusted_value'],
+                groups=posthoc_df['group'],
+                alpha=alpha
+            )
+            
+            # Extract results
+            tukey_pairs = []
+            if hasattr(tukey_result, 'summary_frame'):
+                summary_df = tukey_result.summary_frame()
+                for idx, row in summary_df.iterrows():
+                    tukey_pairs.append({
+                        'group1': str(row['group1']),
+                        'group2': str(row['group2']),
+                        'meandiff': float(row['meandiff']),
+                        'p_value': float(row['p-adj']),
+                        'lower_ci': float(row['lower']),
+                        'upper_ci': float(row['upper']),
+                        'significant': bool(row['reject'])
+                    })
+            else:
+                # Fallback for older version
+                import warnings
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    summary = tukey_result.summary()
+                    for line in str(summary).split('\n')[3:-2]:
+                        parts = line.split()
+                        if len(parts) >= 6:
+                            tukey_pairs.append({
+                                'group1': parts[0],
+                                'group2': parts[1],
+                                'meandiff': float(parts[2]),
+                                'p_value': float(parts[3]),
+                                'lower_ci': float(parts[4]),
+                                'upper_ci': float(parts[5]),
+                                'significant': bool(float(parts[3]) < alpha)
+                            })
+            
+            return {
+                'test_type': 'Tukey HSD on adjusted means',
+                'pairs': tukey_pairs,
+                'alpha': alpha,
+                'n_significant': sum(1 for p in tukey_pairs if p.get('significant', False))
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    def _interpret_effect_size(self, eta_squared):
+        """Interpret partial eta-squared effect sizes"""
+        if eta_squared >= 0.14:
+            return 'large'
+        elif eta_squared >= 0.06:
+            return 'medium'
+        elif eta_squared >= 0.01:
+            return 'small'
+        else:
+            return 'very small'
+    
+    def _generate_ancova_recommendations(self, results, alpha):
+        """Generate comprehensive recommendations based on ANCOVA results"""
+        recommendations = []
+        
+        if 'error' in results:
+            return [f"Analysis failed: {results['error']}"]
+        
+        # Get response and covariate information
+        response_var = results.get('response_var', 'Unknown')
+        covariate_var = results.get('covariate_var', 'Unknown')
+        response_info = results.get('response_info', {})
+        covariate_info = results.get('covariate_info', {})
+        
+        # Handle case where covariate_info is None
+        if covariate_info is None:
+            covariate_info = {}
+    
+        # Handle case where response_info is None
+        if response_info is None:
+            response_info = {}
+        
+        recommendations.append("ANCOVA ANALYSIS RECOMMENDATIONS")
+        recommendations.append("=" * 60)
+        recommendations.append("")
+        recommendations.append(f"Analysis: {response_info.get('display_name', response_var)}")
+        recommendations.append(f"Adjusted for: {covariate_info.get('display', covariate_var)}")
+        if 'context' in covariate_info:
+            recommendations.append(f"Scientific context: {covariate_info['context']}")
+        recommendations.append("")
+        
+        # Model type
+        if 'ancova' in results and 'model_type' in results['ancova']:
+            recommendations.append(f"MODEL: {results['ancova']['model_type']}")
+            if 'note' in results['ancova']:
+                recommendations.append(f"  {results['ancova']['note']}")
+            recommendations.append("")
+        
+        # Homogeneity of slopes
+        slopes = results.get('homogeneity_slopes', {})
+        if 'slopes_homogeneous' in slopes:
+            if slopes['slopes_homogeneous']:
+                recommendations.append("Homogeneity of slopes assumption MET")
+                recommendations.append(f"  (Interaction p={slopes.get('p_value', 1):.4f})")
+            else:
+                recommendations.append("Homogeneity of slopes assumption VIOLATED")
+                recommendations.append(f"  (Interaction p={slopes.get('p_value', 1):.4f})")
+                recommendations.append("  Consider separate analyses for each group")
+                recommendations.append("  Or use ANCOVA with interaction (slopes differ) model")
+            recommendations.append("")
+        
+        # Main effects
+        ancova = results.get('ancova', {})
+        
+        # Group effect
+        group_effect = ancova.get('group_effect', {})
+        if group_effect:
+            if group_effect.get('significant', False):
+                recommendations.append(f"SIGNIFICANT Group effect after controlling for {covariate_var}")
+                recommendations.append(f"(F={group_effect.get('F_statistic', 0):.3f}, p={group_effect.get('p_value', 1):.4f})")
+                if 'interpretation' in group_effect:
+                    recommendations.append(f"  {group_effect['interpretation']}")
+            else:
+                recommendations.append(f"No significant Group effect after controlling for {covariate_var}")
+                recommendations.append(f"(p={group_effect.get('p_value', 1):.4f})")
+                recommendations.append(" Differences may be explained by the covariate")
+            recommendations.append("")
+        
+        # Covariate effect
+        cov_effect = ancova.get('covariate_effect', {})
+        if cov_effect:
+            if cov_effect.get('significant', False):
+                recommendations.append(f"SIGNIFICANT Covariate effect ({covariate_var})")
+                recommendations.append(f"(F={cov_effect.get('F_statistic', 0):.3f}, p={cov_effect.get('p_value', 1):.4f})")
+                recommendations.append(" The covariate is a significant predictor")
+            else:
+                recommendations.append(f"No significant Covariate effect ({covariate_var})")
+                recommendations.append(f"(p={cov_effect.get('p_value', 1):.4f})")
+                recommendations.append("The covariate may not be necessary in the model")
+            recommendations.append("")
+        
+        # Interaction effect
+        int_effect = ancova.get('interaction_effect', {})
+        if int_effect:
+            if int_effect.get('significant', False):
+                recommendations.append(f"SIGNIFICANT Group × {covariate_var} interaction")
+                recommendations.append(f"(p={int_effect.get('p_value', 1):.4f})")
+                recommendations.append(f"{int_effect.get('interpretation', '')}")
+                recommendations.append("The relationship with covariate differs between groups")
+            recommendations.append("")
+        
+        # Effect size
+        if 'effect_size' in results:
+            es = results['effect_size']
+            if 'partial_eta_sq_group' in es:
+                recommendations.append("EFFECT SIZES (Partial η²):")
+                recommendations.append(f"  Group effect: {es['partial_eta_sq_group']:.3f} ({es.get('group_interpretation', 'N/A')})")
+                if 'partial_eta_sq_covariate' in es:
+                    recommendations.append(f"  Covariate effect: {es['partial_eta_sq_covariate']:.3f} ({es.get('covariate_interpretation', 'N/A')})")
+                recommendations.append("  (0.01=small, 0.06=medium, 0.14=large)")
+            recommendations.append("")
+        
+        # Adjusted means
+        if 'adjusted_means' in results and isinstance(results['adjusted_means'], dict) and 'error' not in results['adjusted_means']:
+            recommendations.append("ADJUSTED MEANS (Least Squares Means):")
+            adj_means = results['adjusted_means']
+            for group, stats in adj_means.items():
+                if isinstance(stats, dict) and 'adjusted_mean' in stats:
+                    recommendations.append(f"  {group}: {stats['adjusted_mean']:.3f} ± {stats['se']:.3f} (n={stats['n']})")
+            recommendations.append(f"  Covariate evaluated at grand mean: {adj_means.get(list(adj_means.keys())[0], {}).get('covariate_grand_mean', 0):.3f}")
+            recommendations.append("")
+        
+        # Post-hoc
+        if 'posthoc' in results and 'n_significant' in results['posthoc']:
+            n_sig = results['posthoc']['n_significant']
+            if n_sig > 0:
+                recommendations.append(f"Post-hoc comparisons: {n_sig} significant pairwise differences found")
+                recommendations.append("   Use adjusted means for pairwise comparisons")
+            else:
+                recommendations.append("Post-hoc comparisons: No significant pairwise differences found")
+            recommendations.append("")
+        
+        # Model diagnostics
+        if 'model_diagnostics' in results:
+            diag = results['model_diagnostics']
+            recommendations.append("MODEL DIAGNOSTICS:")
+            
+            if 'r_squared' in ancova:
+                recommendations.append(f"  R²: {ancova.get('r_squared', 0):.4f}")
+                recommendations.append(f"  Adjusted R²: {ancova.get('adj_r_squared', 0):.4f}")
+            
+            if 'shapiro_wilk' in diag:
+                sw = diag['shapiro_wilk']
+                if isinstance(sw, dict) and 'p_value' in sw:
+                    if sw.get('normal', False):
+                        recommendations.append(f"   Residuals normal (Shapiro-Wilk p={sw['p_value']:.4f})")
+                    else:
+                        recommendations.append(f"   Residuals NOT normal (p={sw['p_value']:.4f})")
+                        recommendations.append("   Consider transformation or robust methods")
+            
+            if 'breusch_pagan' in diag:
+                bp = diag['breusch_pagan']
+                if isinstance(bp, dict) and 'p_value' in bp:
+                    if bp.get('homoscedastic', False):
+                        recommendations.append(f"   Homoscedastic residuals (BP p={bp['p_value']:.4f})")
+                    else:
+                        recommendations.append(f"   Heteroscedastic residuals (BP p={bp['p_value']:.4f})")
+                        recommendations.append("   Consider robust standard errors")
+            
+            if 'durbin_watson' in diag:
+                dw = diag['durbin_watson']
+                if isinstance(dw, dict) and 'interpretation' in dw:
+                    recommendations.append(f"  Durbin-Watson: {dw['statistic']:.3f} ({dw['interpretation']})")
+            recommendations.append("")
+        
+        # Overall conclusion
+        recommendations.append("OVERALL CONCLUSION:")
+        if group_effect.get('significant', False):
+            if slopes.get('slopes_homogeneous', True):
+                recommendations.append(f"  Groups differ significantly in {response_info.get('display_name', response_var)}")
+                recommendations.append(f"  after controlling for {covariate_info.get('display', covariate_var)}.")
+                recommendations.append(f"  This indicates genotypic/group differences independent")
+                recommendations.append(f"  of {covariate_info.get('display', covariate_var)} variation.")
+            else:
+                recommendations.append(f"  Groups show different relationships between")
+                recommendations.append(f"  {covariate_info.get('display', covariate_var)} and")
+                recommendations.append(f"  {response_info.get('display_name', response_var)}.")
+                recommendations.append(f"  Separate analysis per group is recommended.")
+        else:
+            recommendations.append(f"  No significant group differences in")
+            recommendations.append(f"  {response_info.get('display_name', response_var)}")
+            recommendations.append(f"  after controlling for {covariate_info.get('display', covariate_var)}.")
+            recommendations.append(f"  Differences may be explained by")
+            recommendations.append(f"  {covariate_info.get('display', covariate_var)} variation.")
+        
+        return recommendations
+    
+    def format_ancova_results(self, results):
+        """Format ANCOVA results for display in the GUI"""
+        # Initialize output list at the beginning
+        output = []
+    
+        if 'error' in results:
+            output = []
+            output.append("=" * 90)
+            output.append("ANCOVA ANALYSIS FAILED")
+            output.append("=" * 90)
+            output.append("")
+            output.append(f"Error: {results['error']}")
+    
+            if 'recommendation' in results:
+                output.append(f"\nRecommendation: {results['recommendation']}")
+    
+            output.append("\n" + "-" * 40)
+            output.append("TROUBLESHOOTING:")
+            output.append("")
+            output.append("  1. The covariate has no variation across channels or time points")
+            output.append("     This makes ANCOVA impossible to interpret.")
+            output.append("")
+            output.append("  2. Check your data:")
+            output.append(f"     Response variable: {results.get('response_var', 'Unknown')}")
+            output.append(f"     Covariate: {results.get('covariate_var', 'Unknown')}")
+            output.append("")
+            output.append("  3. Try one of these solutions:")
+            output.append("     - Use a different covariate (e.g., VPD, leaf_temp_c)")
+            output.append("     - Use ANOVA instead of ANCOVA")
+            output.append("     - Check that the covariate values are correctly loaded")
+            output.append("")
+    
+            if 'validation' in results and 'warnings' in results['validation']:
+                if results['validation']['warnings']:
+                    output.append("  4. Validation warnings:")
+                    for warn in results['validation']['warnings']:
+                        output.append(f"     - {warn}")
+    
+            output.append("=" * 90)
+            return "\n".join(output)
+    
+        # If no error, proceed with normal formatting
+        # output is already defined above
+    
+        # Response and covariate info
+        response_var = results.get('response_var', 'Unknown')
+        covariate_var = results.get('covariate_var', 'Unknown')
+        response_info = results.get('response_info', {})
+        covariate_info = results.get('covariate_info', {})
+        
+        # Handle case where covariate_info is None
+        if covariate_info is None:
+            covariate_info = {}
+    
+        # Handle case where response_info is None
+        if response_info is None:
+            response_info = {}
+        
+        output.append(f"Response variable: {response_info.get('display_name', response_var)}")
+        output.append(f"  Description: {response_info.get('description', 'N/A')}")
+        if 'unit' in response_info:
+            output.append(f"  Unit: {response_info['unit']}")
+        
+        output.append(f"\nCovariate: {covariate_info.get('display', covariate_var)}")
+        if covariate_info:
+            output.append(f"  Scientific context: {covariate_info.get('context', 'N/A')}")
+        
+        output.append("\n" + "=" * 90)
+        output.append("")
+        
+        # Validation warnings
+        validation = results.get('validation', {})
+        if validation.get('warnings'):
+            output.append(" VALIDATION WARNINGS:")
+            for warn in validation['warnings']:
+                output.append(f"   {warn}")
+            output.append("")
+        
+        # Sample information
+        output.append("1. SAMPLE INFORMATION")
+        output.append("-" * 60)
+        output.append(f"Total observations: {results.get('n_observations', 0)}")
+        output.append(f"Number of groups: {results.get('n_groups', 0)}")
+        output.append(f"Groups: {', '.join(results.get('groups', []))}")
+        
+        # Sample sizes
+        sample_sizes = results.get('sample_sizes', {})
+        if sample_sizes:
+            output.append("Sample sizes:")
+            for group, n in sample_sizes.items():
+                output.append(f"  {group}: n={n}")
+        output.append("")
+        
+        # Descriptive statistics
+        output.append("2. DESCRIPTIVE STATISTICS")
+        output.append("-" * 60)
+        output.append(f"{'Group':<15} {'N':>6} {'Mean Response':>15} {'Mean Covariate':>15} {'Correlation':>12}")
+        output.append("-" * 68)
+        for g in sorted(results.get('groups', [])):
+            if g in results.get('descriptive_stats', {}):
+                stats = results['descriptive_stats'][g]
+                output.append(f"{g:<15} {stats['n']:>6} {stats['mean_response']:>15.3f} "
+                            f"{stats['mean_covariate']:>15.3f} {stats['correlation']:>12.3f}")
+        output.append("")
+        
+        # Covariate range
+        cov_stats = results.get('covariate_stats', {})
+        if cov_stats:
+            output.append(f"Covariate range: {cov_stats.get('range', (0,0))[0]:.3f} - {cov_stats.get('range', (0,0))[1]:.3f}")
+            output.append(f"Covariate overall mean: {cov_stats.get('overall_mean', 0):.3f}")
+            output.append(f"Overall response-covariate correlation: {cov_stats.get('overall_correlation', 0):.4f}")
+        output.append("")
+        
+        # Homogeneity of slopes test
+        output.append("3. HOMOGENEITY OF SLOPES TEST")
+        output.append("-" * 60)
+        slopes = results.get('homogeneity_slopes', {})
+        if 'error' not in slopes and slopes:
+            output.append(f"F-statistic: {slopes.get('F_statistic', 0):.4f}")
+            output.append(f"p-value: {slopes.get('p_value', 1):.6f}")
+            output.append(f"df: {slopes.get('df', 0):.0f}, {slopes.get('df_residual', 0):.0f}")
+            output.append(f"Assumption met: {' Yes' if slopes.get('slopes_homogeneous', True) else ' No'}")
+            output.append(f"Interpretation: {slopes.get('interpretation', '')}")
+            
+            # Show group slopes
+            group_slopes = slopes.get('group_slopes', {})
+            if group_slopes:
+                output.append("\n  Within-group slopes:")
+                for group, slope_info in group_slopes.items():
+                    output.append(f"    {group}: slope={slope_info['slope']:.4f}, R²={slope_info.get('r_squared', 0):.4f}, p={slope_info.get('p_value', 1):.4f}")
+            if 'note' in slopes:
+                output.append(f"\n  Note: {slopes['note']}")
+        output.append("")
+        
+        # ANCOVA results
+        output.append("4. ANCOVA RESULTS")
+        output.append("-" * 60)
+        ancova = results.get('ancova', {})
+        if 'error' not in ancova:
+            output.append(f"Model type: {ancova.get('model_type', 'Standard ANCOVA')}")
+            if 'note' in ancova:
+                output.append(f"Note: {ancova['note']}")
+            output.append("")
+            
+            # Model coefficients
+            if 'coefficients' in ancova:
+                output.append("Model coefficients:")
+                output.append(f"  {'Parameter':<30} {'Value':>12} {'SE':>12} {'p-value':>12} {'Sig':>6}")
+                output.append("  " + "-" * 75)
+                for coeff in ancova['coefficients']:
+                    sig = '***' if coeff['pvalue'] < 0.001 else '**' if coeff['pvalue'] < 0.01 else '*' if coeff['pvalue'] < 0.05 else ''
+                    output.append(f"  {coeff['name']:<30} {coeff['value']:>12.4f} {coeff['se']:>12.4f} {coeff['pvalue']:>12.4f} {sig:>6}")
+                output.append("")
+            
+            # Group effect
+            group_effect = ancova.get('group_effect', {})
+            if group_effect:
+                output.append("Group effect (after controlling for covariate):")
+                output.append(f"  F({group_effect.get('df', 0):.0f}, {group_effect.get('df_residual', 0):.0f}) = {group_effect.get('F_statistic', 0):.4f}")
+                output.append(f"  p-value: {group_effect.get('p_value', 1):.6f}")
+                output.append(f"  Significant at α=0.05: {' Yes' if group_effect.get('significant', False) else ' No'}")
+                if 'interpretation' in group_effect:
+                    output.append(f"  {group_effect['interpretation']}")
+            output.append("")
+            
+            # Covariate effect
+            cov_effect = ancova.get('covariate_effect', {})
+            if cov_effect:
+                output.append("Covariate effect:")
+                output.append(f"  F({cov_effect.get('df', 0):.0f}, {cov_effect.get('df_residual', 0):.0f}) = {cov_effect.get('F_statistic', 0):.4f}")
+                output.append(f"  p-value: {cov_effect.get('p_value', 1):.6f}")
+                output.append(f"  Significant at α=0.05: {' Yes' if cov_effect.get('significant', False) else ' No'}")
+                if 'interpretation' in cov_effect:
+                    output.append(f"  {cov_effect['interpretation']}")
+            output.append("")
+            
+            # Interaction effect (if present)
+            int_effect = ancova.get('interaction_effect', {})
+            if int_effect:
+                output.append("Interaction effect (Group × Covariate):")
+                output.append(f"  F({int_effect.get('df', 0):.0f}, {int_effect.get('df_residual', 0):.0f}) = {int_effect.get('F_statistic', 0):.4f}")
+                output.append(f"  p-value: {int_effect.get('p_value', 1):.6f}")
+                output.append(f"  Significant at α=0.05: {' Yes' if int_effect.get('significant', False) else ' No'}")
+                if 'interpretation' in int_effect:
+                    output.append(f"  {int_effect['interpretation']}")
+            output.append("")
+            
+            # Model fit
+            if 'r_squared' in ancova:
+                output.append("Model fit:")
+                output.append(f"  R²: {ancova.get('r_squared', 0):.4f}")
+                output.append(f"  Adjusted R²: {ancova.get('adj_r_squared', 0):.4f}")
+                output.append("")
+        
+        # Effect size
+        if 'effect_size' in results:
+            output.append("5. EFFECT SIZE (Partial η²)")
+            output.append("-" * 60)
+            es = results['effect_size']
+            output.append(f"Group: {es.get('partial_eta_sq_group', 0):.4f} ({es.get('group_interpretation', 'N/A')})")
+            output.append(f"Covariate: {es.get('partial_eta_sq_covariate', 0):.4f} ({es.get('covariate_interpretation', 'N/A')})")
+            output.append("  (0.01=small, 0.06=medium, 0.14=large)")
+        output.append("")
+        
+        # Adjusted means
+        if 'adjusted_means' in results:
+            output.append("6. ADJUSTED MEANS (Least Squares Means)")
+            output.append("-" * 60)
+            adj_means = results['adjusted_means']
+            if isinstance(adj_means, dict) and 'error' not in adj_means:
+                output.append(f"{'Group':<15} {'Adj. Mean':>12} {'SE':>12} {'n':>8}")
+                output.append("-" * 50)
+                for g, stats in adj_means.items():
+                    if isinstance(stats, dict) and 'adjusted_mean' in stats:
+                        output.append(f"{g:<15} {stats['adjusted_mean']:>12.3f} "
+                                    f"{stats.get('se', 0):>12.3f} {stats.get('n', 0):>8}")
+                # Get the grand mean from the first group
+                first_group = list(adj_means.keys())[0] if adj_means else None
+                if first_group and isinstance(adj_means[first_group], dict):
+                    output.append(f"\nCovariate evaluated at grand mean: {adj_means[first_group].get('covariate_grand_mean', 0):.3f}")
+            elif isinstance(adj_means, dict) and 'error' in adj_means:
+                output.append(f"  Adjusted means: {adj_means['error']}")
+            else:
+                output.append("  Adjusted means: Not available")
+        output.append("")
+        
+        # Post-hoc comparisons
+        if 'posthoc' in results:
+            output.append("7. POST-HOC COMPARISONS (Adjusted Means)")
+            output.append("-" * 60)
+            posthoc = results['posthoc']
+            if 'error' not in posthoc:
+                output.append(f"Test type: {posthoc.get('test_type', 'Tukey HSD')}")
+                output.append(f"Total comparisons: {len(posthoc.get('pairs', []))}")
+                output.append(f"Significant differences: {posthoc.get('n_significant', 0)}")
+                
+                sig_pairs = [p for p in posthoc.get('pairs', []) if p.get('significant', False)]
+                if sig_pairs:
+                    output.append("\n  Significant pairwise differences:")
+                    for p in sig_pairs[:10]:
+                        output.append(f"    {p['group1']} vs {p['group2']}: diff={p['meandiff']:.3f}, p={p['p_value']:.4f}")
+                    if len(sig_pairs) > 10:
+                        output.append(f"    ... and {len(sig_pairs) - 10} more")
+                else:
+                    output.append("\n  No significant pairwise differences found")
+            else:
+                output.append(f"  Post-hoc error: {posthoc.get('error', 'Unknown error')}")
+        output.append("")
+        
+        # Model diagnostics
+        if 'model_diagnostics' in results:
+            output.append("8. MODEL DIAGNOSTICS")
+            output.append("-" * 60)
+            diag = results['model_diagnostics']
+            
+            shapiro = diag.get('shapiro_wilk', {})
+            if shapiro and isinstance(shapiro, dict) and 'p_value' in shapiro:
+                output.append("Residual normality (Shapiro-Wilk):")
+                output.append(f"  W-statistic: {shapiro.get('statistic', 0):.4f}")
+                output.append(f"  p-value: {shapiro.get('p_value', 1):.6f}")
+                output.append(f"  Normal: {' Yes' if shapiro.get('normal', False) else ' No'}")
+                output.append(f"  Sample size: {shapiro.get('n', 0)}")
+            
+            bp_test = diag.get('breusch_pagan', {})
+            if bp_test and isinstance(bp_test, dict) and 'p_value' in bp_test:
+                output.append("\nHomoscedasticity (Breusch-Pagan):")
+                output.append(f"  LM statistic: {bp_test.get('lm_statistic', 0):.4f}")
+                output.append(f"  p-value: {bp_test.get('p_value', 1):.6f}")
+                output.append(f"  Homoscedastic: {' Yes' if bp_test.get('homoscedastic', True) else ' No'}")
+            
+            dw_test = diag.get('durbin_watson', {})
+            if dw_test and isinstance(dw_test, dict) and 'statistic' in dw_test:
+                output.append(f"\nDurbin-Watson: {dw_test['statistic']:.3f} ({dw_test.get('interpretation', 'N/A')})")
+        output.append("")
+        
+        # Assumptions summary
+        if 'assumptions' in results:
+            output.append("9. ASSUMPTIONS SUMMARY")
+            output.append("-" * 60)
+            assumptions = results['assumptions']
+            output.append(f"Homogeneous slopes: {' Met' if assumptions.get('homogeneous_slopes', True) else ' Violated'}")
+            output.append(f"Normality of residuals: {' Met' if assumptions.get('normality', False) else ' Not met'}")
+            output.append(f"Homoscedasticity: {' Met' if assumptions.get('homoscedasticity', False) else ' Not met'}")
+            
+            if assumptions.get('warning'):
+                output.append(f"\n WARNING: {assumptions['warning']}")
+        output.append("")
+        
+        # Recommendations
+        output.append("10. RECOMMENDATIONS")
+        output.append("-" * 60)
+        for rec in results.get('recommendations', []):
+            output.append(f"  {rec}")
+        output.append("")
+        
+        output.append("=" * 90)
+        output.append("ANCOVA ANALYSIS COMPLETE")
+        output.append("=" * 90)
+        
+        return "\n".join(output)
       
 # ============================================
 # MAIN APPLICATION CLASS
@@ -6236,7 +8306,7 @@ class LLMAnalyzer:
 class GasExchangeApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Gas Exchange Jyrkki Data Processing David Lazaro-Gimeno")
+        self.root.title("Gas Exchange Data Analyzer (GEDA) David Lazaro-Gimeno")
     
         # Get screen dimensions
         screen_width = self.root.winfo_screenwidth()
@@ -6439,7 +8509,7 @@ class GasExchangeApp:
         self.sidebar_frame.bind("<Configure>", configure_canvas)
 
         # Use self.sidebar_frame, not sidebar_frame
-        title_label = ttk.Label(self.sidebar_frame, text="Gas Exchange Analyzer", 
+        title_label = ttk.Label(self.sidebar_frame, text="Gas Exchange Data Analyzer", 
                                font=("Arial", 14, "bold"))
         title_label.grid(row=0, column=0, pady=(0, 25), padx=10)
 
@@ -6682,50 +8752,127 @@ class GasExchangeApp:
                 self.update_batch_darkness_plots(self.batch_stats)
     
         # Refresh distribution plots
-        #self.update_batch_distribution_plots(self.batch_stats)
+        self.update_batch_distribution_plots(self.batch_stats)
     
         # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
         self.update_wuei_distribution_tab()
 
     def batch_deselect_all_channels(self):
         """Deselect all channels in batch results"""
-        # Uncheck all checkboxes
+        # First, deselect all checkboxes
         for channel, var in self.batch_channel_vars.items():
             var.set(False)
-    
-        # Update selected channels list
-        self.batch_selected_channels = []
-    
-        # Force UI update
-        self.root.update_idletasks()
 
-        # Refresh metric category plots
+        # Clear the selected channels list
+        self.batch_selected_channels = []
+
+        print(f"DEBUG: Deselect all - batch_selected_channels: {self.batch_selected_channels}")
+        print(f"DEBUG: Deselect all - checkbox states: {[(ch, var.get()) for ch, var in self.batch_channel_vars.items()]}")
+
+        # Update metric category plots (this should show empty plots)
         if hasattr(self, 'batch_stats') and self.batch_stats:
             self.update_batch_metric_category_plots(self.batch_stats)
 
-        # Refresh darkness plots
+        # Update darkness plots (this should show empty plots)
         if hasattr(self, 'batch_stats') and self.batch_stats:
             if hasattr(self, 'batch_combined_df'):
                 self.update_batch_darkness_plots(self.batch_stats, self.batch_combined_df)
             else:
                 self.update_batch_darkness_plots(self.batch_stats)
 
-        # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
+        # REMOVE the problematic call - distribution plots are handled by WUEi tab
+        # self.update_batch_distribution_plots(self.batch_stats)
+
+        # UPDATE THE WUEi DISTRIBUTION TAB
+        # This should respect the empty selected_channels list
         self.update_wuei_distribution_tab()
        
     def on_batch_palette_change(self, event=None):
         """Update batch plots when palette changes"""
-        if hasattr(self, 'batch_stats') and self.batch_stats:
-            # Just update metric category plots (these are the ones actually displayed)
-            # and the distribution tab
+        if not hasattr(self, 'batch_stats') or self.batch_stats is None:
+            return
+
+        # CLOSE ALL EXISTING FIGURES BEFORE CREATING NEW ONES
+        plt.close('all')
+
+        # Get the new palette value
+        palette = self.batch_palette_var.get()
+
+        # Update the current batch palette
+        self.current_batch_palette = palette
+
+        # Show a status message in the status label
+        if hasattr(self, 'slider_info_label'):
+            self.slider_info_label.config(
+                text=f"  Updating plots with palette: {palette}...", 
+                foreground="black",
+                background="yellow",
+                font=("Arial", 9, "bold")
+            )
+            self.root.update()
+        
+        # Show a custom popup window that auto-closes
+        popup = tk.Toplevel(self.root)
+        popup.title("Updating")
+        popup.transient(self.root)
+        popup.overrideredirect(True)
+        
+        # Get the main window position and size
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+        
+        # Center the popup
+        popup_width = 300
+        popup_height = 80
+        screen_width = popup.winfo_screenwidth()
+        screen_height = popup.winfo_screenheight()
+        x = (screen_width - popup_width) // 2
+        y = (screen_height - popup_height) // 2
+        popup.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
+        
+        # Add message
+        ttk.Label(popup, text=f"Updating plots with palette: {palette}\nPlease wait...", 
+                  font=("Arial", 12, "bold")).pack(expand=True, pady=20)
+        
+        popup.update()
+        
+        try:
+            # Update the metric category plots (this is the main batch plots)
             self.update_batch_metric_category_plots(self.batch_stats)
+
+            # Update darkness plots if they exist
+            if hasattr(self, 'batch_combined_df') and self.batch_combined_df is not None:
+                self.update_batch_darkness_plots(self.batch_stats, self.batch_combined_df)
+            else:
+                self.update_batch_darkness_plots(self.batch_stats)
+
+            # Update the WUEi distribution tab
             self.update_wuei_distribution_tab()
-        else:
-                # If batch_plots_frame doesn't exist, just update the metric category plots
-                palette = self.batch_palette_var.get()
-                self.current_batch_palette = palette
-                # Update metric category plots directly
-                self.update_batch_metric_category_plots(self.batch_stats)
+
+            # Update the main interactive plots palette if data is loaded
+            if hasattr(self, 'original_calculated_data') and self.original_calculated_data is not None:
+                self.update_all_plots()
+            
+            # Show success message
+            if hasattr(self, 'slider_info_label'):
+                self.slider_info_label.config(
+                    text=f"  Palette updated to: {palette}", 
+                    foreground="green",
+                    background="",
+                    font=("Arial", 8)
+                )
+                self.root.after(3000, lambda: 
+                    self.slider_info_label.config(
+                        text="Enter values, then click 'Apply Changes'", 
+                        foreground="blue"
+                    ) if hasattr(self, 'slider_info_label') else None
+                )
+                
+        finally:
+            # Close the popup
+            popup.destroy()
     
     def update_shift_time_info(self):
         """Update the time information display for Shift Start Time with integer values"""
@@ -7236,10 +9383,10 @@ class GasExchangeApp:
         
             # Add mapping info
             if channel_mapping:
-                info_text += f"\n✓ Mapping Applied: {os.path.basename(self.mapping_path_var.get())}\n"
+                info_text += f"\n Mapping Applied: {os.path.basename(self.mapping_path_var.get())}\n"
                 info_text += f"  Replicate: {replicate_name if replicate_name else 'Auto-detected'}\n"
             else:
-                info_text += f"\n✗ No mapping file loaded\n"
+                info_text += f"\n No mapping file loaded\n"
         
             info_text += "\n" + "=" * 50 + "\n"
             info_text += "Click 'Process Batch' to analyze all files"
@@ -7466,234 +9613,7 @@ class GasExchangeApp:
             messagebox.showerror("Error", "No files were processed successfully")
 
         progress_window.destroy()
-      
 
-    def copy_treeview_selection(self, treeview):
-        """Copy selected rows from a Treeview to clipboard"""
-        try:
-            # Get selected items
-            selected_items = treeview.selection()
-            if not selected_items:
-                if hasattr(self, 'slider_info_label'):
-                    self.slider_info_label.config(
-                        text="No rows selected to copy", 
-                        foreground="orange"
-                    )
-                    self.root.after(2000, lambda: 
-                        self.slider_info_label.config(
-                            text="Enter values, then click 'Apply Changes'", 
-                            foreground="blue"
-                        ) if hasattr(self, 'slider_info_label') else None
-                    )
-                return
-        
-            # Get column headings
-            columns = treeview['columns']
-            if not columns:
-                columns = ['']  # In case columns is empty
-        
-            # Build header row
-            headers = []
-            for col in columns:
-                heading_text = treeview.heading(col, 'text')
-                headers.append(heading_text)
-        
-            # Collect data from selected rows
-            data_rows = []
-            for item in selected_items:
-                values = treeview.item(item, 'values')
-                # Convert None to empty string
-                str_values = [str(v) if v is not None else '' for v in values]
-                data_rows.append(str_values)
-        
-            # Format as tab-separated text
-            lines = []
-            if headers:
-                lines.append('\t'.join(headers))
-            for row in data_rows:
-                lines.append('\t'.join(row))
-        
-            text_to_copy = '\n'.join(lines)
-        
-            # Copy to clipboard
-            self.root.clipboard_clear()
-            self.root.clipboard_append(text_to_copy)
-            self.root.update()
-        
-            # Show success message
-            if hasattr(self, 'slider_info_label'):
-                self.slider_info_label.config(
-                    text=f"✓ Copied {len(selected_items)} row(s) to clipboard", 
-                    foreground="green"
-                )
-                self.root.after(2000, lambda: 
-                    self.slider_info_label.config(
-                        text="Enter values, then click 'Apply Changes'", 
-                        foreground="blue"
-                    ) if hasattr(self, 'slider_info_label') else None
-                )
-        
-            # Also print to console for debugging
-            print(f"Copied {len(selected_items)} rows from treeview")
-            
-        except Exception as e:
-            print(f"Error copying from treeview: {e}")
-            traceback.print_exc()
-            if hasattr(self, 'slider_info_label'):
-                self.slider_info_label.config(
-                    text=f"Error copying: {str(e)[:50]}", 
-                    foreground="red"
-                )
-
-    def setup_treeview_copy_menu(self, treeview):
-        """Add right-click context menu and keyboard shortcuts for Treeview copying"""
-        # Create context menu
-        menu = tk.Menu(treeview, tearoff=0)
-        menu.add_command(label="Copy Selected Row(s)", command=lambda: self.copy_treeview_selection(treeview))
-        menu.add_separator()
-        menu.add_command(label="Select All", command=lambda: treeview.selection_set(treeview.get_children()))
-        menu.add_command(label="Copy All", command=lambda: self.copy_treeview_all(treeview))
-    
-        # Variable to track if menu is active
-        menu.active = False
-    
-        def show_menu(event):
-            # Unpost any existing menu first
-            try:
-                menu.unpost()
-            except:
-                pass
-            # Show the menu
-            try:
-                menu.tk_popup(event.x_root, event.y_root)
-                menu.active = True
-            finally:
-                menu.grab_release()
-    
-        def dismiss_menu(event):
-            """Dismiss the menu on left click"""
-            try:
-                if menu.active:
-                    menu.unpost()
-                    menu.active = False
-            except:
-                pass
-    
-        # Bind right-click to show menu
-        treeview.bind("<Button-3>", show_menu)
-        # Bind left-click to dismiss menu
-        treeview.bind("<Button-1>", dismiss_menu)
-        # Also bind to the root window to catch clicks outside the treeview
-        self.root.bind("<Button-1>", lambda e: self._dismiss_all_menus())
-    
-        # Keyboard shortcuts
-        treeview.bind("<Control-c>", lambda e: self.copy_treeview_selection(treeview))
-        treeview.bind("<Control-a>", lambda e: treeview.selection_set(treeview.get_children()))
-        treeview.bind("<Control-A>", lambda e: treeview.selection_set(treeview.get_children()))
-    
-        # Store menu reference
-        if not hasattr(self, '_treeview_menus'):
-            self._treeview_menus = []
-        self._treeview_menus.append(menu)
-    
-        return menu
-
-    def _dismiss_all_menus(self):
-        """Dismiss all active context menus"""
-        if hasattr(self, '_treeview_menus'):
-            for menu in self._treeview_menus:
-                try:
-                    if hasattr(menu, 'active') and menu.active:
-                        menu.unpost()
-                        menu.active = False
-                except:
-                    pass
-    
-        # Also dismiss any other menus
-        if hasattr(self, '_copy_menus'):
-            for menu in self._copy_menus:
-                try:
-                    if hasattr(menu, 'active') and menu.active:
-                        menu.unpost()
-                        menu.active = False
-                except:
-                    pass
-
-    def copy_treeview_all(self, treeview):
-        """Copy all rows from a Treeview to clipboard"""
-        try:
-            # Select all items first
-            all_items = treeview.get_children()
-            if not all_items:
-                if hasattr(self, 'slider_info_label'):
-                    self.slider_info_label.config(
-                        text="No rows to copy", 
-                        foreground="orange"
-                    )
-                return
-        
-            treeview.selection_set(all_items)
-            # Then copy the selection
-            self.copy_treeview_selection(treeview)
-        except Exception as e:
-            print(f"Error copying all rows: {e}")
-            traceback.print_exc()
-
-    def copy_treeview_as_excel(self, treeview):
-        """Copy selected rows as Excel-compatible format with proper headers"""
-        try:
-            selected_items = treeview.selection()
-            if not selected_items:
-                return
-        
-            # Get column headings
-            columns = treeview['columns']
-        
-            # Build header row with proper column names
-            headers = []
-            for col in columns:
-                heading_text = treeview.heading(col, 'text')
-                # Clean up heading text (remove units in parentheses for cleaner copy)
-                if ' (' in heading_text:
-                    heading_text = heading_text.split(' (')[0]
-                headers.append(heading_text)
-        
-            # Collect data
-            data_rows = []
-            for item in selected_items:
-                values = treeview.item(item, 'values')
-                str_values = [str(v) if v is not None else '' for v in values]
-                data_rows.append(str_values)
-        
-            # Format as tab-separated (Excel compatible)
-            lines = ['\t'.join(headers)]
-            for row in data_rows:
-                lines.append('\t'.join(row))
-        
-            text_to_copy = '\n'.join(lines)
-        
-            # Copy to clipboard
-            self.root.clipboard_clear()
-            self.root.clipboard_append(text_to_copy)
-            self.root.update()
-        
-            # Show success message
-            if hasattr(self, 'slider_info_label'):
-                self.slider_info_label.config(
-                    text=f"✓ Copied {len(selected_items)} row(s) (Excel format)", 
-                    foreground="green"
-                )
-                self.root.after(2000, lambda: 
-                    self.slider_info_label.config(
-                        text="Enter values, then click 'Apply Changes'", 
-                        foreground="blue"
-                    ) if hasattr(self, 'slider_info_label') else None
-                )
-            
-        except Exception as e:
-            print(f"Error copying as Excel format: {e}")
-            traceback.print_exc()
-    
     def setup_anova_analysis_tab(self):
         """Setup the ANOVA + Tukey analysis tab in Batch Results"""
         # Create the tab
@@ -7806,7 +9726,7 @@ class GasExchangeApp:
     
         self.anova_results_text.config(yscrollcommand=text_v_scrollbar.set, 
                                        xscrollcommand=text_h_scrollbar.set)
-                                       
+        
         # Add context menu for copying text
         self.setup_text_copy_menu(self.anova_results_text)
     
@@ -7953,10 +9873,10 @@ class GasExchangeApp:
     
         self.llm_results_text.config(yscrollcommand=text_v_scrollbar.set, 
                                      xscrollcommand=text_h_scrollbar.set)
-
+    
         # Add context menu for copying text
         self.setup_text_copy_menu(self.llm_results_text)
-    
+        
         # Grid layout for text widget and its scrollbars
         self.llm_results_text.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         text_v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
@@ -8018,6 +9938,23 @@ class GasExchangeApp:
             messagebox.showerror("Error", "Please enter a valid alpha level (e.g., 0.05)")
             return
 
+        # ============ CHECK CHANNEL SELECTION ============
+        if hasattr(self, 'batch_channel_vars') and self.batch_channel_vars:
+            selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
+            if not selected_channels:
+                messagebox.showwarning("Warning", 
+                    "No channels selected.\n\n"
+                    "Please select at least one channel in the Metric Plots tab\n"
+                    "before running the LMM analysis.")
+                self.llm_status_label.config(text="No channels selected", foreground="orange")
+                return
+        else:
+            messagebox.showwarning("Warning", 
+                "Channel selection not available.\n\n"
+                "Please run batch processing first.")
+            self.llm_status_label.config(text="No channel selection available", foreground="orange")
+            return
+
         # Combine all processed data
         combined_df = pd.concat(self.batch_all_processed_data, ignore_index=True)
 
@@ -8035,19 +9972,18 @@ class GasExchangeApp:
         # Apply base name extraction to Channel column
         combined_df['Channel'] = combined_df['Channel'].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
 
-        # Filter by selected channels if any
-        if hasattr(self, 'batch_channel_vars') and self.batch_channel_vars:
-            selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
-            if selected_channels:
-                combined_df = combined_df[combined_df['Channel'].isin(selected_channels)]
+        # Filter by selected channels
+        combined_df = combined_df[combined_df['Channel'].isin(selected_channels)]
 
         if len(combined_df) == 0:
             messagebox.showwarning("Warning", "No data available for the selected channels.")
+            self.llm_status_label.config(text="No data for selected channels", foreground="red")
             return
 
         # Check if the metric exists
         if metric not in combined_df.columns:
             messagebox.showerror("Error", f"Metric '{metric}' not found in the data.")
+            self.llm_status_label.config(text=f"Metric not found", foreground="red")
             return
 
         # Check if this is a light-dark experiment (has absorbed_radiation column)
@@ -8061,6 +9997,7 @@ class GasExchangeApp:
         self.llm_results_text.config(state='normal')
         self.llm_results_text.delete(1.0, tk.END)
         self.llm_results_text.insert(tk.END, f"Running Linear Mixed Model analysis...\n")
+        self.llm_results_text.insert(tk.END, f"Selected channels: {', '.join(selected_channels)}\n")
         self.llm_results_text.insert(tk.END, f"Light-Dark detection: {'Enabled' if is_light_dark else 'Disabled'}\n\n")
         self.llm_results_text.update()
 
@@ -8135,12 +10072,12 @@ class GasExchangeApp:
                         self.llm_results_text.insert(tk.END, "\n\n" + "=" * 70 + "\n")
                         self.llm_results_text.insert(tk.END, "✅ Diagnostic plots generated and displayed in the 'LMM Diagnostic Plots' tab.\n")
                     else:
-                        self.llm_results_text.insert(tk.END, "\n\n⚠ Could not generate diagnostic plots - model may not have residuals.\n")
+                        self.llm_results_text.insert(tk.END, "\n\n Could not generate diagnostic plots - model may not have residuals.\n")
                         self.llm_results_text.insert(tk.END, "Try running the analysis with a different metric or check the data.\n")
                 else:
-                    self.llm_results_text.insert(tk.END, "\n\n⚠ Could not prepare data for diagnostic plots.\n")
+                    self.llm_results_text.insert(tk.END, "\n\n Could not prepare data for diagnostic plots.\n")
             else:
-                self.llm_results_text.insert(tk.END, "\n\n⚠ No valid model found for diagnostic plots. Check the analysis results above.\n")
+                self.llm_results_text.insert(tk.END, "\n\n No valid model found for diagnostic plots. Check the analysis results above.\n")
                 # Show available keys for debugging
                 available_keys = [k for k in results.keys() if not k.startswith('_')]
                 if available_keys:
@@ -8188,7 +10125,7 @@ class GasExchangeApp:
                         # Re-fit OLS to get residuals
                         model_ols = ols("Response ~ C(Line) * Time_centered", data=lmm_df).fit()
                         model_results = model_ols
-                        print("✓ Re-fitted OLS model for diagnostics")
+                        print(" Re-fitted OLS model for diagnostics")
                     else:
                         return None
                 except Exception as e:
@@ -8272,7 +10209,7 @@ class GasExchangeApp:
                                 xy=(0.05, 0.95), xycoords='axes fraction',
                                 fontsize=10, bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
                     if shapiro_p < 0.05:
-                        ax2.annotate('⚠ Residuals deviate from normality',
+                        ax2.annotate(' Residuals deviate from normality',
                                     xy=(0.05, 0.88), xycoords='axes fraction',
                                     fontsize=10, color='red')
                 except Exception as e:
@@ -8384,15 +10321,13 @@ class GasExchangeApp:
             traceback.print_exc()
             return None
 
-    
     def setup_text_copy_menu(self, text_widget):
         """Add right-click context menu and keyboard shortcuts for Text widget copying"""
-        # Create context menu
+        # Create context menu with ONLY Copy and Select All
         menu = tk.Menu(text_widget, tearoff=0)
         menu.add_command(label="Copy", command=lambda: self.copy_text_selection(text_widget))
         menu.add_separator()
         menu.add_command(label="Select All", command=lambda: text_widget.tag_add("sel", "1.0", "end-1c"))
-        menu.add_command(label="Copy All", command=lambda: self.copy_text_all(text_widget))
     
         def show_menu(event):
             try:
@@ -8437,7 +10372,7 @@ class GasExchangeApp:
                 # Show success message
                 if hasattr(self, 'slider_info_label'):
                     self.slider_info_label.config(
-                        text="✓ Text copied to clipboard", 
+                        text="Text copied to clipboard", 
                         foreground="green"
                     )
                     self.root.after(2000, lambda: 
@@ -8490,7 +10425,7 @@ class GasExchangeApp:
                 # Show success message
                 if hasattr(self, 'slider_info_label'):
                     self.slider_info_label.config(
-                        text="✓ All text copied to clipboard", 
+                        text=" All text copied to clipboard", 
                         foreground="green"
                     )
                     self.root.after(2000, lambda: 
@@ -8769,14 +10704,31 @@ class GasExchangeApp:
 
         # Get analysis type
         analysis_type = self.anova_type_var.get()
-        # Map display name to internal name
         type_map = {
             'Repeated Measures ANOVA (Recommended for Light-Dark)': 'repeated_measures',
             'Standard Two-Way ANOVA': 'two_way',
             'Standard One-Way ANOVA': 'one_way'
         }
         analysis_key = type_map.get(analysis_type, 'one_way')
-    
+
+        # ============ CHECK CHANNEL SELECTION ============
+        if hasattr(self, 'batch_channel_vars') and self.batch_channel_vars:
+            selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
+            if not selected_channels:
+                messagebox.showwarning("Warning", 
+                    "No channels selected.\n\n"
+                    "Please select at least one channel in the Metric Plots tab\n"
+                    "before running the ANOVA analysis.")
+                self.anova_status_label.config(text="No channels selected", foreground="orange")
+                return
+        else:
+            # If batch_channel_vars doesn't exist, we can't filter
+            messagebox.showwarning("Warning", 
+                "Channel selection not available.\n\n"
+                "Please run batch processing first.")
+            self.anova_status_label.config(text="No channel selection available", foreground="orange")
+            return
+
         # Update status
         self.anova_status_label.config(text=f"Running {analysis_type}...", foreground="orange")
         self.root.update()
@@ -8785,6 +10737,7 @@ class GasExchangeApp:
         self.anova_results_text.config(state='normal')
         self.anova_results_text.delete(1.0, tk.END)
         self.anova_results_text.insert(tk.END, f"Running {analysis_type}...\n\n")
+        self.anova_results_text.insert(tk.END, f"Selected channels: {', '.join(selected_channels)}\n\n")
         self.anova_results_text.update()
 
         try:
@@ -8795,14 +10748,11 @@ class GasExchangeApp:
             combined_df['Channel'] = combined_df['Channel'].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
 
             # Filter by selected channels
-            if hasattr(self, 'batch_channel_vars') and self.batch_channel_vars:
-                selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
-                if selected_channels:
-                    combined_df = combined_df[combined_df['Channel'].isin(selected_channels)]
+            combined_df = combined_df[combined_df['Channel'].isin(selected_channels)]
 
             if len(combined_df) == 0:
                 messagebox.showwarning("Warning", "No data available for the selected channels.")
-                self.anova_status_label.config(text="No data available", foreground="red")
+                self.anova_status_label.config(text="No data for selected channels", foreground="red")
                 self.anova_results_text.config(state='disabled')
                 return
 
@@ -8812,34 +10762,36 @@ class GasExchangeApp:
                 self.anova_results_text.config(state='disabled')
                 return
 
+            self.anova_results_text.insert(tk.END, f"Data shape: {combined_df.shape}\n")
+            self.anova_results_text.insert(tk.END, f"Channels: {combined_df['Channel'].unique().tolist()}\n\n")
+            self.anova_results_text.update()
+
             analyzer = ANOVAAnalyzer(self)
             is_light_dark = 'absorbed_radiation' in combined_df.columns
-    
+
             # Run the appropriate analysis
             if is_light_dark and analysis_key == 'repeated_measures':
                 self.anova_results_text.insert(tk.END, "Light-dark experiment detected.\n")
                 self.anova_results_text.insert(tk.END, "Using Repeated Measures ANOVA (recommended).\n\n")
-            
+
                 results = analyzer.run_repeated_measures_anova_with_phases(
                     combined_df, metric=metric, alpha=alpha
                 )
-            
-                # Check for note about fallback analysis
+
                 if 'note' in results:
                     self.anova_results_text.insert(tk.END, f"Note: {results['note']}\n\n")
-            
+
                 formatted_results = analyzer.format_rm_anova_results(results)
-            
+
             elif is_light_dark and analysis_key == 'two_way':
                 self.anova_results_text.insert(tk.END, "Light-dark experiment detected.\n")
                 self.anova_results_text.insert(tk.END, "Using Two-Way ANOVA (Group × Phase).\n\n")
-            
-                # Use the same method but with a flag for two-way
+
                 results = analyzer.run_repeated_measures_anova_with_phases(
                     combined_df, metric=metric, alpha=alpha
                 )
                 formatted_results = analyzer.format_rm_anova_results(results)
-            
+
             else:
                 self.anova_results_text.insert(tk.END, "Using Standard One-Way ANOVA.\n\n")
                 results = analyzer.run_anova_tukey(
@@ -8855,24 +10807,23 @@ class GasExchangeApp:
             self.anova_results_text.insert(tk.END, "\n\n" + "=" * 70 + "\n")
             self.anova_results_text.insert(tk.END, "Generating diagnostic plots...\n")
             self.anova_results_text.update()
-        
+
             try:
                 palette = self.batch_palette_var.get() if hasattr(self, 'batch_palette_var') else 'tab10'
-            
-                # Use appropriate diagnostic plot method
+
                 if is_light_dark and hasattr(analyzer, 'generate_phase_anova_diagnostic_plots'):
                     fig = analyzer.generate_phase_anova_diagnostic_plots(results, combined_df, metric, palette)
                 else:
                     fig = analyzer.generate_anova_diagnostic_plots(results, combined_df, metric, palette)
-            
+
                 self.display_anova_diagnostic_plots(fig)
                 self.anova_results_text.insert(tk.END, "\n✅ Diagnostic plots generated.\n")
             except Exception as e:
-                self.anova_results_text.insert(tk.END, f"\n⚠ Could not generate plots: {str(e)}\n")
+                self.anova_results_text.insert(tk.END, f"\n Could not generate plots: {str(e)}\n")
 
             # Update status
             if 'error' in results and results['error']:
-                self.anova_status_label.config(text=f"Analysis completed with warnings", foreground="orange")
+                self.anova_status_label.config(text="Analysis completed with warnings", foreground="orange")
             else:
                 self.anova_status_label.config(text="Analysis complete", foreground="green")
 
@@ -8923,6 +10874,540 @@ class GasExchangeApp:
         # Store results for potential plotting
         self.current_lmm_comparison = results
     
+    
+    def setup_ancova_analysis_tab(self):
+        """Setup the ANCOVA analysis tab in the batch results notebook"""
+        # Check if ANCOVA tab already exists
+        if hasattr(self, 'ancova_tab') and self.ancova_tab.winfo_exists():
+            return
+    
+        # Create the tab
+        self.ancova_tab = ttk.Frame(self.batch_results_notebook)
+        self.batch_results_notebook.add(self.ancova_tab, text="ANCOVA Analysis")
+    
+        # Configure the tab to expand
+        self.ancova_tab.columnconfigure(0, weight=1)
+        self.ancova_tab.rowconfigure(0, weight=1)
+    
+        # Create main container with scrollbar
+        container = ttk.Frame(self.ancova_tab)
+        container.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        container.columnconfigure(0, weight=1)
+        container.rowconfigure(1, weight=1)  # Results area expands
+    
+        # ============ CONTROL FRAME ============
+        control_frame = ttk.LabelFrame(container, text="ANCOVA Analysis", padding="15")
+        control_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
+        control_frame.columnconfigure(4, weight=1)  # Push buttons to left
+    
+        control_frame.configure(padding="15 20 15 15")  # Extra vertical padding
+    
+        # Row 1: Response Variable
+        row_frame = ttk.Frame(control_frame)
+        row_frame.grid(row=0, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
+    
+        ttk.Label(row_frame, text="Response Variable:", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=5)
+    
+        self.ancova_response_var = tk.StringVar(value='CO2_exchange_rate')
+        response_combo, self.ancova_response_groups = create_grouped_metric_combobox(
+            row_frame, 
+            self.ancova_response_var,
+            width=30
+        )
+        response_combo.pack(side=tk.LEFT, padx=5)
+    
+        # Quick info button for response
+        self.response_info_btn = ttk.Button(row_frame, text="ℹ", width=3,
+                                            command=self.show_response_info)
+        self.response_info_btn.pack(side=tk.LEFT, padx=2)
+    
+        # Row 2: Covariate
+        row_frame2 = ttk.Frame(control_frame)
+        row_frame2.grid(row=1, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
+    
+        ttk.Label(row_frame2, text="Covariate:", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=5)
+    
+        self.ancova_covariate_var = tk.StringVar(value='absorbed_radiation')
+        covariate_combo, self.ancova_covariate_groups = create_grouped_metric_combobox(
+            row_frame2, 
+            self.ancova_covariate_var,
+            width=30
+        )
+        covariate_combo.pack(side=tk.LEFT, padx=5)
+    
+        # Quick info button for covariate
+        self.covariate_info_btn = ttk.Button(row_frame2, text="ℹ", width=3,
+                                             command=self.show_covariate_info)
+        self.covariate_info_btn.pack(side=tk.LEFT, padx=2)
+    
+        # Row 3: Alpha and Recommended Pairs
+        row_frame3 = ttk.Frame(control_frame)
+        row_frame3.grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(10, 5))
+    
+        ttk.Label(row_frame3, text="α:", font=("Arial", 10)).pack(side=tk.LEFT, padx=15)
+        self.ancova_alpha_var = tk.StringVar(value='0.05')
+        alpha_entry = ttk.Entry(row_frame3, textvariable=self.ancova_alpha_var, width=8)
+        alpha_entry.pack(side=tk.LEFT, padx=5)
+    
+        # Recommended pairs dropdown
+        ttk.Label(row_frame3, text=" | Recommended Pairs:", font=("Arial", 10)).pack(side=tk.LEFT, padx=15)
+        self.ancova_pair_var = tk.StringVar(value='')
+        self.ancova_pair_combo = ttk.Combobox(row_frame3, textvariable=self.ancova_pair_var,
+                                              width=40)
+        self.ancova_pair_combo.pack(side=tk.LEFT, padx=5)
+    
+        # Store reference to ANCOVA analyzer
+        self.ancova_analyzer = ANCOVAAnalyzer(self)
+        
+        # Populate recommended pairs
+        self._populate_ancova_pairs()
+        self.ancova_pair_combo.bind('<<ComboboxSelected>>', self.on_ancova_pair_selected)
+        
+        # Bind response selection to update covariate recommendations
+        self.ancova_response_var.trace('w', self.on_response_selected)
+    
+        # Row 4: Run button and status
+        row_frame4 = ttk.Frame(control_frame)
+        row_frame4.grid(row=3, column=0, columnspan=5, sticky=tk.W, pady=(10, 5))
+    
+        self.ancova_run_btn = ttk.Button(row_frame4, text="▶ Run ANCOVA Analysis", 
+                                         command=self.run_ancova_analysis,
+                                         style="Success.TButton")
+        self.ancova_run_btn.pack(side=tk.LEFT, padx=5)
+    
+        self.ancova_status_label = ttk.Label(row_frame4, text="Ready", foreground="blue", font=("Arial", 10))
+        self.ancova_status_label.pack(side=tk.LEFT, padx=20)
+    
+        # Row 5: Info text
+        info_label = ttk.Label(control_frame, 
+                              text="Select response and covariate, then click the button to run.",
+                              font=("Arial", 9), foreground="gray")
+        info_label.grid(row=4, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
+    
+        # ============ RESULTS DISPLAY ============
+        results_container = ttk.Frame(container)
+        results_container.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        results_container.columnconfigure(0, weight=1)
+        results_container.rowconfigure(0, weight=1)
+    
+        # Create a canvas with scrollbars for the text widget
+        canvas = tk.Canvas(results_container, highlightthickness=0)
+        canvas.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+    
+        # Add vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(results_container, orient="vertical", command=canvas.yview)
+        v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+    
+        # Horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(results_container, orient="horizontal", command=canvas.xview)
+        h_scrollbar.grid(row=1, column=0, sticky=(tk.E, tk.W))
+    
+        # Create a frame inside the canvas for the text widget
+        text_frame = ttk.Frame(canvas)
+        canvas.create_window((0, 0), window=text_frame, anchor="nw")
+    
+        # Create the text widget WITHOUT wrap
+        self.ancova_results_text = tk.Text(text_frame, wrap=tk.NONE, 
+                                           font=("Courier New", 9),
+                                           height=50)
+    
+        # Context menu for copying text
+        self.setup_text_copy_menu(self.ancova_results_text)
+        
+        # Scrollbars to the text widget
+        text_v_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", 
+                                         command=self.ancova_results_text.yview)
+        text_h_scrollbar = ttk.Scrollbar(text_frame, orient="horizontal", 
+                                         command=self.ancova_results_text.xview)
+    
+        self.ancova_results_text.config(yscrollcommand=text_v_scrollbar.set, 
+                                        xscrollcommand=text_h_scrollbar.set)
+    
+        # Grid layout for text widget and its scrollbars
+        self.ancova_results_text.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        text_v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        text_h_scrollbar.grid(row=1, column=0, sticky=(tk.E, tk.W))
+    
+        # Configure text_frame to expand
+        text_frame.columnconfigure(0, weight=1)
+        text_frame.rowconfigure(0, weight=1)
+    
+        # Configure canvas scroll region
+        def update_scroll_region(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            canvas.itemconfig(canvas.find_withtag("all")[0], width=canvas.winfo_width())
+    
+        text_frame.bind("<Configure>", update_scroll_region)
+        canvas.bind("<Configure>", lambda e: update_scroll_region(None))
+    
+        # Configure the canvas to work with scrollbars
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+    
+        # Add initial message
+        self.ancova_results_text.insert(tk.END, 
+            "ANCOVA ANALYSIS\n"
+            "================\n\n"
+            "Analysis of Covariance (ANCOVA) tests for group differences\n"
+            "after controlling for the effect of a continuous covariate.\n\n"
+            "COMMON USES IN GAS EXCHANGE EXPERIMENTS:\n"
+            "  * Compare photosynthetic rates after accounting for VPD effects\n"
+            "  * Compare stomatal conductance after controlling for light intensity\n"
+            "  * Compare WUE after adjusting for temperature differences\n"
+            "  * Control for confounding environmental variables\n\n"
+            "HOW TO USE:\n"
+            "  1. Select a Response variable (e.g., CO2_exchange_rate)\n"
+            "  2. Select a Covariate to control for (e.g., VPD)\n"
+            "  3. Click 'Run ANCOVA Analysis'\n\n"
+            "The analysis will automatically:\n"
+            "  * Test homogeneity of slopes (ANCOVA assumption)\n"
+            "  * Calculate adjusted means (least squares means)\n"
+            "  * Perform post-hoc comparisons on adjusted means\n"
+            "  * Check model assumptions (normality, homoscedasticity)\n"
+            "  * Provide effect sizes and recommendations\n"
+        )
+        self.ancova_results_text.config(state='disabled')
+    
+
+    def _populate_ancova_pairs(self):
+        """Populate the recommended pairs dropdown"""
+        if not hasattr(self, 'ancova_analyzer'):
+            return
+    
+        pairs = self.ancova_analyzer.recommended_pairs
+        if pairs:
+            display_options = []
+            for pair in pairs:
+                display = f"{pair['response_display']} <- {pair['covariate_display']}"
+                display_options.append(display)
+            self.ancova_pair_combo['values'] = display_options
+            self.ancova_pair_combo.set('')
+        else:
+            # Show that no pairs are available but still functional
+            self.ancova_pair_combo['values'] = ['Select manually above']
+            self.ancova_pair_combo.set('Select manually above')
+
+    def on_ancova_pair_selected(self, event=None):
+        """Handle selection of a recommended pair"""
+        selected = self.ancova_pair_var.get()
+        if not selected or selected == 'Select manually above' or selected == 'No recommended pairs available':
+            return
+    
+        # Parse the selection to get response and covariate
+        for pair in self.ancova_analyzer.recommended_pairs:
+            display = f"{pair['response_display']} <- {pair['covariate_display']}"
+            if display == selected:
+                # Find the actual variable names
+                for response, config in self.ancova_analyzer.configs.items():
+                    if config['display_name'] == pair['response_display']:
+                        self.ancova_response_var.set(response)
+                        break
+            
+                self.ancova_covariate_var.set(pair['covariate'])
+                break
+
+    def on_response_selected(self, *args):
+        """Update covariate recommendations when response changes"""
+        response = self.ancova_response_var.get()
+        suitable = self.ancova_analyzer.get_suitable_covariates(response)
+    
+        # Update the covariate combobox values
+        if suitable:
+            # Get the current covariate combobox
+            # This would require storing the combobox reference
+            pass
+
+    def show_response_info(self):
+        """Show information about the selected response variable"""
+        response = self.ancova_response_var.get()
+        if response in self.ancova_analyzer.configs:
+            config = self.ancova_analyzer.configs[response]
+            info = f"RESPONSE VARIABLE: {config['display_name']}\n"
+            info += f"Unit: {config['unit']}\n"
+            info += f"Description: {config['description']}\n\n"
+            info += "Suitable covariates:\n"
+            for cov, details in config['suitable_covariates'].items():
+                info += f"   {details['display']}: {details['context']}\n"
+        
+            messagebox.showinfo("Response Variable Info", info)
+        else:
+            messagebox.showinfo("Response Variable Info", f"No detailed information available for '{response}'")
+
+    def show_covariate_info(self):
+        """Show information about the selected covariate"""
+        response = self.ancova_response_var.get()
+        covariate = self.ancova_covariate_var.get()
+    
+        info = self.ancova_analyzer.get_covariate_info(response, covariate)
+        if info:
+            msg = f"COVARIATE: {info['display']}\n"
+            msg += f"Context: {info['context']}\n"
+            msg += f"Interpretation: {info['interpretation']}\n"
+            messagebox.showinfo("Covariate Info", msg)
+        else:
+            messagebox.showinfo("Covariate Info", f"No detailed information available for '{covariate}'")
+
+    def run_ancova_analysis(self):
+        """Run ANCOVA analysis on selected response and covariate"""
+        if not hasattr(self, 'batch_all_processed_data') or not self.batch_all_processed_data:
+            messagebox.showwarning("Warning", "No batch data available. Run batch processing first.")
+            return
+
+        response_var = self.ancova_response_var.get()
+        covariate_var = self.ancova_covariate_var.get()
+
+        # Validate that response and covariate are different
+        if response_var == covariate_var:
+            messagebox.showerror("Error", "Response variable and covariate must be different.")
+            return
+
+        try:
+            alpha = float(self.ancova_alpha_var.get())
+            if alpha <= 0 or alpha >= 1:
+                raise ValueError("Alpha must be between 0 and 1")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid alpha level (e.g., 0.05)")
+            return
+
+        # ============ CHECK CHANNEL SELECTION ============
+        if hasattr(self, 'batch_channel_vars') and self.batch_channel_vars:
+            selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
+            if not selected_channels:
+                messagebox.showwarning("Warning", 
+                    "No channels selected.\n\n"
+                    "Please select at least one channel in the Metric Plots tab\n"
+                    "before running the ANCOVA analysis.")
+                self.ancova_status_label.config(text="No channels selected", foreground="orange")
+                return
+        else:
+            messagebox.showwarning("Warning", 
+                "Channel selection not available.\n\n"
+                "Please run batch processing first.")
+            self.ancova_status_label.config(text="No channel selection available", foreground="orange")
+            return
+
+        # Update status
+        self.ancova_status_label.config(text="Running ANCOVA analysis...", foreground="orange")
+        self.root.update()
+
+        # Enable text widget
+        self.ancova_results_text.config(state='normal')
+        self.ancova_results_text.delete(1.0, tk.END)
+        self.ancova_results_text.insert(tk.END, f"Running ANCOVA analysis...\n\n")
+        self.ancova_results_text.insert(tk.END, f"Selected channels: {', '.join(selected_channels)}\n\n")
+        self.ancova_results_text.update()
+
+        try:
+            # Combine all processed data
+            combined_df = pd.concat(self.batch_all_processed_data, ignore_index=True)
+
+            # Apply base name extraction to Channel column
+            combined_df['Channel'] = combined_df['Channel'].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
+
+            # Filter by selected channels
+            combined_df = combined_df[combined_df['Channel'].isin(selected_channels)]
+
+            if len(combined_df) == 0:
+                messagebox.showwarning("Warning", "No data available for the selected channels.")
+                self.ancova_status_label.config(text="No data available", foreground="red")
+                self.ancova_results_text.config(state='disabled')
+                return
+
+            # Check if variables exist
+            if response_var not in combined_df.columns:
+                messagebox.showerror("Error", f"Response variable '{response_var}' not found.")
+                self.ancova_status_label.config(text="Variable not found", foreground="red")
+                self.ancova_results_text.config(state='disabled')
+                return
+
+            if covariate_var not in combined_df.columns:
+                messagebox.showerror("Error", f"Covariate '{covariate_var}' not found.")
+                self.ancova_status_label.config(text="Variable not found", foreground="red")
+                self.ancova_results_text.config(state='disabled')
+                return
+
+            self.ancova_results_text.insert(tk.END, f"Data shape: {combined_df.shape}\n")
+            self.ancova_results_text.insert(tk.END, f"Channels: {combined_df['Channel'].unique().tolist()}\n\n")
+            self.ancova_results_text.update()
+
+            # Run ANCOVA
+            results = self.ancova_analyzer.run_ancova(
+                combined_df, 
+                response_var=response_var,
+                group_col='Channel',
+                covariate_col=covariate_var,
+                alpha=alpha
+            )
+
+            # Store results for potential plotting
+            self.current_ancova_results = results
+
+            # Format and display results
+            formatted_results = self.ancova_analyzer.format_ancova_results(results)
+            self.ancova_results_text.delete(1.0, tk.END)
+            self.ancova_results_text.insert(tk.END, formatted_results)
+
+            # ============ GENERATE DIAGNOSTIC PLOTS ============
+            self.ancova_results_text.insert(tk.END, "\n\n" + "=" * 70 + "\n")
+        
+            if 'error' in results:
+                # Don't try to generate diagnostic plots if the analysis failed
+                self.ancova_results_text.insert(tk.END, "ANCOVA analysis failed. Skipping diagnostic plots.\n")
+                self.ancova_status_label.config(text="Analysis failed - see details above", foreground="red")
+            else:
+                self.ancova_results_text.insert(tk.END, "Generating ANCOVA diagnostic plots...\n")
+                self.ancova_results_text.update()
+            
+                try:
+                    palette = self.batch_palette_var.get() if hasattr(self, 'batch_palette_var') else 'tab10'
+                    fig = self.ancova_analyzer.generate_ancova_diagnostic_plots(
+                        results, 
+                        combined_df, 
+                        response_var, 
+                        palette
+                    )
+                
+                    # Display the diagnostic plots
+                    self.display_ancova_diagnostic_plots(fig)
+                
+                    # Diagnostic plots generated - user can switch to the tab manually
+                    self.ancova_results_text.insert(tk.END, "\nANCOVA diagnostic plots generated and displayed in the 'ANCOVA Diagnostic Plots' tab.\n")
+                    self.ancova_results_text.insert(tk.END, "Switch to that tab to view the plots.\n")
+                    self.ancova_status_label.config(text="Analysis complete - see results above", foreground="green")
+                    
+                except Exception as e:
+                    self.ancova_results_text.insert(tk.END, f"\n⚠ Could not generate diagnostic plots: {str(e)}\n")
+                    self.ancova_status_label.config(text="Analysis complete - diagnostic plots failed", foreground="orange")
+                    traceback.print_exc()
+        
+            # Update status based on results
+            if 'error' in results:
+                self.ancova_status_label.config(text="Analysis failed", foreground="red")
+            else:
+                ancova = results.get('ancova', {})
+                group_effect = ancova.get('group_effect', {})
+                if group_effect.get('significant', False):
+                    self.ancova_status_label.config(text="Significant group effect found - check ANCOVA Diagnostic Plots tab", foreground="green")
+                else:
+                    self.ancova_status_label.config(text="Analysis complete - no significant group effect", foreground="blue")
+                
+        except Exception as e:
+            self.ancova_results_text.delete(1.0, tk.END)
+            self.ancova_results_text.insert(tk.END, f"Error running ANCOVA analysis:\n\n{str(e)}\n\n")
+            self.ancova_results_text.insert(tk.END, traceback.format_exc())
+            self.ancova_status_label.config(text=f"Error: {str(e)}", foreground="red")
+            traceback.print_exc()
+
+        self.ancova_results_text.config(state='disabled')
+    
+    def display_ancova_diagnostic_plots(self, fig):
+        """Display the ANCOVA diagnostic plots in the GUI with both scrollbars"""
+
+        # Check if ANCOVA diagnostic plots tab already exists
+        if hasattr(self, 'ancova_diagnostic_tab') and self.ancova_diagnostic_tab.winfo_exists():
+            # Clear existing content
+            for widget in self.ancova_diagnostic_tab.winfo_children():
+                widget.destroy()
+        else:
+            # Create a new tab for diagnostic plots
+            self.ancova_diagnostic_tab = ttk.Frame(self.batch_results_notebook)
+            self.batch_results_notebook.add(self.ancova_diagnostic_tab, text="ANCOVA Diagnostic Plots")
+    
+            # Configure the tab to expand
+            self.ancova_diagnostic_tab.columnconfigure(0, weight=1)
+            self.ancova_diagnostic_tab.rowconfigure(0, weight=1)
+
+        # Create a canvas with BOTH scrollbars for the plots
+        canvas_frame = ttk.Frame(self.ancova_diagnostic_tab)
+        canvas_frame.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        canvas_frame.columnconfigure(0, weight=1)
+        canvas_frame.rowconfigure(0, weight=1)
+
+        # Create canvas
+        canvas = tk.Canvas(canvas_frame, highlightthickness=0)
+
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=canvas.yview)
+
+        # Horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(canvas_frame, orient="horizontal", command=canvas.xview)
+
+        # Scrollable frame inside canvas
+        scrollable_frame = ttk.Frame(canvas)
+
+        # Store window ID for later updates
+        window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+        # Update scroll region when frame changes
+        def update_scroll_region(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        scrollable_frame.bind("<Configure>", update_scroll_region)
+
+        # Configure scrollbars
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+
+        # Grid layout with both scrollbars
+        canvas.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        h_scrollbar.grid(row=1, column=0, sticky=(tk.E, tk.W))
+
+        # Update canvas window width when canvas resizes
+        def on_canvas_resize(event):
+            canvas_width = canvas.winfo_width()
+            if canvas_width > 1:
+                canvas.itemconfig(window_id, width=canvas_width)
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        canvas.bind("<Configure>", on_canvas_resize)
+
+        # Embed the figure in the scrollable frame
+        canvas_widget = FigureCanvasTkAgg(fig, scrollable_frame)
+        canvas_widget.draw()
+
+        # Get the figure widget and grid it to fill the scrollable frame
+        figure_widget = canvas_widget.get_tk_widget()
+        figure_widget.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=10)
+
+        # Make scrollable frame expand
+        scrollable_frame.columnconfigure(0, weight=1)
+        scrollable_frame.rowconfigure(0, weight=1)
+
+        # Add download and close buttons
+        btn_frame = ttk.Frame(scrollable_frame)
+        btn_frame.grid(row=1, column=0, pady=10)
+
+        # Download button
+        ttk.Button(btn_frame, text="Download ANCOVA Diagnostic Plots",
+                  command=lambda: self.download_plot(fig, "ANCOVA_Diagnostic_Plots")).pack(side=tk.LEFT, padx=5)
+
+        # Close button
+        ttk.Button(btn_frame, text="Close Plots",
+                  command=lambda: self.close_ancova_diagnostic_plots()).pack(side=tk.LEFT, padx=5)
+
+        # Force initial resize after the window is fully drawn
+        self.root.after(100, lambda: on_canvas_resize(None))
+        self.root.after(300, lambda: on_canvas_resize(None))
+
+        # Store references for cleanup
+        self.ancova_diagnostic_canvas = canvas_widget
+        self.ancova_diagnostic_figure = fig
+    
+        # ============ FORCE THE TAB TO BE SELECTED ============
+        # This ensures the user sees the diagnostic plots immediately
+        #for i, tab_id in enumerate(self.batch_results_notebook.tabs()):
+        #    tab_text = self.batch_results_notebook.tab(tab_id, "text")
+        #    if "ANCOVA Diagnostic Plots" in tab_text:
+        #        self.batch_results_notebook.select(i)
+        #        break
+    
+    def close_ancova_diagnostic_plots(self):
+        """Close the ANCOVA diagnostic plots tab"""
+        if hasattr(self, 'ancova_diagnostic_tab') and self.ancova_diagnostic_tab.winfo_exists():
+            plt.close('all')
+            self.batch_results_notebook.forget(self.ancova_diagnostic_tab)
+            delattr(self, 'ancova_diagnostic_tab')
+            if hasattr(self, 'ancova_diagnostic_canvas'):
+                delattr(self, 'ancova_diagnostic_canvas')
     
     def process_single_file(self, filepath, channel_mapping, replicate_name=None):
         """Process a single file for batch processing with channel mapping"""
@@ -9238,6 +11723,7 @@ class GasExchangeApp:
 
     def generate_averaged_plots(self, stats_by_channel, output_dir):
         """Generate averaged plots with error bars for all metrics using renamed channels"""
+        plt.close('all')  # Close all existing figures before creating new ones
     
         # Define metrics to plot (same as main plots)
         plot_categories = {
@@ -9540,9 +12026,6 @@ class GasExchangeApp:
         hsb = ttk.Scrollbar(stats_tab, orient="horizontal", command=self.stats_tree.xview)
         self.stats_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
-        # Context menu for copying table data
-        self.setup_treeview_copy_menu(self.stats_tree)
-        
         self.stats_tree.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         vsb.grid(row=0, column=1, sticky=(tk.N, tk.S))
         hsb.grid(row=1, column=0, sticky=(tk.E, tk.W))
@@ -9729,6 +12212,9 @@ class GasExchangeApp:
     
         # ============ TAB 5: LLM Analysis ============
         self.setup_llm_analysis_tab()
+        
+        # ============ TAB 6 ANCOVA analysis ============
+        self.setup_ancova_analysis_tab()
 
     def show_wuei_dist_placeholder_message(self):
         """Show placeholder message in WUEi distribution tab before batch processing"""
@@ -10476,6 +12962,9 @@ class GasExchangeApp:
         for widget in self.batch_checkbox_frame.winfo_children():
             widget.destroy()
 
+        # Clear stored variables
+        self.batch_channel_vars = {}
+
         # Get sorted channels
         channels = sorted(stats_by_channel.keys())
 
@@ -10485,36 +12974,22 @@ class GasExchangeApp:
             self.batch_selected_channels = []
             return
 
-        # Store current selection state before clearing
-        current_selection = set()
-        if hasattr(self, 'batch_channel_vars'):
-            current_selection = {ch for ch, var in self.batch_channel_vars.items() if var.get()}
-    
-        # If no current selection, select all
-        if not current_selection:
-            current_selection = set(channels)
-
-        # Clear stored variables (but keep the old ones for reference)
-        self.batch_channel_vars = {}
-
         # Create checkboxes in a grid layout
         max_per_row = 6
         for idx, channel in enumerate(channels):
             row = idx // max_per_row
             col = idx % max_per_row
         
-            # Use the current selection state if available
-            default_value = channel in current_selection
-        
-            var = tk.BooleanVar(value=default_value)
+            # Set all channels to selected by default
+            var = tk.BooleanVar(value=True)
             self.batch_channel_vars[channel] = var
         
             cb = ttk.Checkbutton(self.batch_checkbox_frame, text=channel, variable=var,
                                 command=lambda ch=channel: self.on_batch_channel_toggle(ch))
             cb.grid(row=row, column=col, sticky=tk.W, padx=5, pady=2)
 
-        # Update selected channels list
-        self.batch_selected_channels = [ch for ch, var in self.batch_channel_vars.items() if var.get()]
+        # Update selected channels list. Include all channels
+        self.batch_selected_channels = channels.copy()
 
         # Configure grid columns
         for i in range(max_per_row):
@@ -10532,23 +13007,92 @@ class GasExchangeApp:
         print(f"Channel toggled: {channel}")
         print(f"Selected channels: {self.batch_selected_channels}")
     
-        # Refresh the metric category plots
-        if hasattr(self, 'batch_stats') and self.batch_stats:
-            self.update_batch_metric_category_plots(self.batch_stats)
+        # Show a custom popup window that auto-closes - CENTERED ON MAIN WINDOW
+        popup = tk.Toplevel(self.root)
+        popup.title("Updating")
+        popup.transient(self.root)
+        popup.overrideredirect(True)
     
-        # Refresh the darkness plots
-        if hasattr(self, 'batch_stats') and self.batch_stats:
-            if hasattr(self, 'batch_combined_df'):
-                self.update_batch_darkness_plots(self.batch_stats, self.batch_combined_df)
-            else:
-                self.update_batch_darkness_plots(self.batch_stats)
+        # Get the main window position and size
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
     
-        # ============ UPDATE THE WUEi DISTRIBUTION TAB ============
-        # Force update of the WUEi distribution tab
-        self.update_wuei_distribution_tab()
+        # Popup size
+        popup_width = 350
+        popup_height = 100
+    
+        # Calculate position to center on the main window
+        x = main_x + (main_width - popup_width) // 2
+        y = main_y + (main_height - popup_height) // 2
+    
+        popup.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
+    
+        # Add a frame with a subtle border for better appearance
+        frame = ttk.Frame(popup, padding=20)
+        frame.pack(fill=tk.BOTH, expand=True)
+    
+        # Determine if channel was selected or deselected
+        is_selected = channel in self.batch_selected_channels
+        #icon = "ADDING" if is_selected else "REMOVING"
+        action = "Showing" if is_selected else "Hiding"
+    
+        # Add message with icon-like text
+        ttk.Label(frame, text=f"{action} channel...", 
+                  font=("Arial", 12, "bold")).pack(pady=(0, 5))
+        ttk.Label(frame, text=f"{channel}", 
+                  font=("Arial", 12), foreground="black").pack()
+    
+        # Add a small progress indicator
+        progress = ttk.Progressbar(frame, mode='indeterminate', length=200)
+        progress.pack(pady=10)
+        progress.start(10)
+    
+        popup.update()
+    
+        try:
+            # Refresh the metric category plots
+            if hasattr(self, 'batch_stats') and self.batch_stats:
+                self.update_batch_metric_category_plots(self.batch_stats)
+    
+            # Refresh the darkness plots
+            if hasattr(self, 'batch_stats') and self.batch_stats:
+                if hasattr(self, 'batch_combined_df'):
+                    self.update_batch_darkness_plots(self.batch_stats, self.batch_combined_df)
+                else:
+                    self.update_batch_darkness_plots(self.batch_stats)
+    
+            # UPDATE THE WUEi DISTRIBUTION TAB
+            self.update_wuei_distribution_tab()
+        
+            # Update status message
+            if hasattr(self, 'slider_info_label'):
+                selected_count = len(self.batch_selected_channels)
+                total_count = len(self.batch_channel_vars)
+                self.slider_info_label.config(
+                    text=f"  {selected_count}/{total_count} channels selected", 
+                    foreground="green",
+                    background="",
+                    font=("Arial", 8)
+                )
+                self.root.after(3000, lambda: 
+                    self.slider_info_label.config(
+                        text="Enter values, then click 'Apply Changes'", 
+                        foreground="blue"
+                    ) if hasattr(self, 'slider_info_label') else None
+                )
+            
+        finally:
+            # Close the popup
+            progress.stop()
+            popup.destroy()
     
     def update_batch_metric_category_plots(self, stats_by_channel):
         """Update all metric category plots with selected channels"""
+        
+        plt.close('all')  # Close all existing figures before creating new ones
+        
         if not stats_by_channel:
             return
 
@@ -11103,6 +13647,8 @@ class GasExchangeApp:
         Generate darkness plots for batch results with auto-detected darkness periods
         Uses the same channel selection as Metric Plots tab
         """
+        plt.close('all')  # Close all existing figures before creating new ones
+        
         if not stats_by_channel:
             return
     
@@ -11729,25 +14275,16 @@ class GasExchangeApp:
                     canvas.get_tk_widget().grid(row=0, column=0, sticky=(tk.W, tk.E))
             return
 
+        # Print channel names for debugging
+        print(f"\nUpdating batch results tabs with channels: {list(stats_by_channel.keys())}")
+
         # Update statistics table
         self.update_statistics_table(stats_by_channel)
 
-        # Populate channel selector ONLY if it hasn't been populated yet
-        # or if the channels have changed
-        if not hasattr(self, 'batch_channel_vars') or not self.batch_channel_vars:
-            self.populate_batch_channel_selector(stats_by_channel)
-        else:
-            # Just update the checkbox labels if channels changed
-            current_channels = set(stats_by_channel.keys())
-            existing_channels = set(self.batch_channel_vars.keys())
-            if current_channels != existing_channels:
-                # Channels changed, repopulate
-                self.populate_batch_channel_selector(stats_by_channel)
-            else:
-                # Keep existing selection, just update plots
-                pass
+        # Populate channel selector
+        self.populate_batch_channel_selector(stats_by_channel)
 
-        # Update metric category plots
+        # Update metric category plots (now includes WUEi distribution in Efficiency tab)
         self.update_batch_metric_category_plots(stats_by_channel)
     
         # ============ Force update WUEi distribution tab ============
@@ -11818,6 +14355,7 @@ class GasExchangeApp:
     
     def update_wuei_distribution_tab(self):
        """Update the WUEi distribution plot tab dynamically when channels are selected/deselected"""
+       plt.close('all')  # Close all existing figures before creating new ones
 
        # Check if we have batch data available
        if not hasattr(self, 'batch_all_processed_data') or not self.batch_all_processed_data:
@@ -11837,12 +14375,12 @@ class GasExchangeApp:
            selected_channels = None
 
        # If no channels selected but we have stats, select all
-       if (not selected_channels or len(selected_channels) == 0) and hasattr(self, 'batch_stats') and self.batch_stats:
-           selected_channels = list(self.batch_stats.keys())
-           if hasattr(self, 'batch_channel_vars'):
-               for ch in self.batch_channel_vars:
-                   self.batch_channel_vars[ch].set(True)
-               self.batch_selected_channels = selected_channels.copy()
+       #if (not selected_channels or len(selected_channels) == 0) and hasattr(self, 'batch_stats') and self.batch_stats:
+        #   selected_channels = list(self.batch_stats.keys())
+         #  if hasattr(self, 'batch_channel_vars'):
+          #     for ch in self.batch_channel_vars:
+           #        self.batch_channel_vars[ch].set(True)
+            #   self.batch_selected_channels = selected_channels.copy()
 
        try:
            # Combine all processed data
@@ -11851,9 +14389,18 @@ class GasExchangeApp:
            # Extract base channel names
            combined_df['Channel_base'] = combined_df['Channel'].astype(str).str.replace(r'\s*\(\d+\)$', '', regex=True)
 
-           # Filter by selected channels
+           # Filter by selected channels - if None or empty, show empty plot
            if selected_channels and len(selected_channels) > 0:
                combined_df = combined_df[combined_df['Channel_base'].isin(selected_channels)]
+           else:
+               # No channels selected - show empty plot
+               if hasattr(self, 'plot_container_in_anova') and self.plot_container_in_anova.winfo_exists():
+                   for widget in self.plot_container_in_anova.winfo_children():
+                       widget.destroy()
+                   ttk.Label(self.plot_container_in_anova, 
+                            text="No channels selected.\n\nUse the channel selector above to choose channels.",
+                            font=("Arial", 12), foreground="gray", justify=tk.CENTER).pack(pady=50, expand=True)
+               return
 
            unique_channels = combined_df['Channel_base'].nunique() if len(combined_df) > 0 else 0
 
@@ -13205,9 +15752,6 @@ class GasExchangeApp:
         self.setup_batch_results_tabs()
         self.setup_notes_tab()
         
-        # Add copy functionality to the statistics table
-        self.setup_treeview_copy_menu(self.stats_tree)
-        
     def setup_introduction_tab(self):
         tab = ttk.Frame(self.main_notebook)
         self.main_notebook.add(tab, text="Introduction")
@@ -13232,8 +15776,9 @@ KEY FEATURES:
   * Calculate and observe processed data with comprehensive physiological metrics
   * Customize channel names and critical parameter values
   * Visualize your results with publication-quality plots
-  * Advanced statistical analysis (ANOVA, LMM, OLS) for batch experiments
-  * Light-dark and Red+Blue light interval analysis
+  * Advanced statistical analysis (ANOVA, LMM, OLS, ANCOVA) for batch experiments
+  * Light-dark and Red+Blue light interval analysis with auto-detection
+  * Re-import compatible data export with full metadata
 
 Download processed data and export plots at 300 dpi for your publications.
 
@@ -13245,6 +15790,8 @@ Use the sidebar to:
   1. Upload your TXT data files
   2. Adjust time points (remove stabilization periods or end points)
   3. Select colorblind-friendly palettes for data visualization
+  4. Rename channels for easier identification in plots
+  5. Update critical parameters (leaf area, air flow, radiation, boundary layer, cuticular conductance)
 
 Time point removal applies to ALL channels simultaneously for consistent analysis.
 
@@ -13293,8 +15840,10 @@ they will override default inputs in batch process calculations.
 
 BATCH PROCESSING OUTPUTS:
   * Statistics table (mean, standard deviation, SEM, n) for each metric
-  * Averaged plots with error bars
+  * Averaged plots with error bars (mean ± SEM)
   * WUEi distribution plot (violin + boxplot)
+  * Channel selection checkboxes with plot filtering
+  * Multiple metric categories organized as tabs
   * Batch report summarizing all processed files
   * Excel file with all statistics
 
@@ -13310,38 +15859,7 @@ Rep1	Channel 5	cond1_nacl          0.0013812  0.000591
 Rep1	Channel 6	WT_nacl             0.0015385  0.000591
 Rep1	Channel 7	WT                  0.0018776  0.000591
 Rep1	Channel 8	no_cond1-4          0.0024069  0.000591
-Rep2	Channel 1	no_cond1-4_nacl (2) 0.0011749  0.000591
-Rep2	Channel 2	WT_nacl (2)         0.0011914  0.000591
-Rep2	Channel 3	no_cond1-6 (3)      0.0016018  0.000591
-Rep2	Channel 4	WT (2)              0.0017024  0.000591
-Rep2	Channel 5	cond1_nacl (2)      0.0012284  0.000591
-Rep2	Channel 6	no_cond1-6_nacl (2) 0.0017947  0.000591
-Rep2	Channel 7	cond1               0.0016419  0.000591
-Rep2	Channel 8	no_cond1-4 (2)      0.001884   0.000591
-Rep3	Channel 1	no_cond1-6_nacl (3) 0.0020586  0.000591
-Rep3	Channel 2	no_cond1-6_nacl (4) 0.0015655  0.000591
-Rep3	Channel 3	WT_nacl (3)         0.001388   0.000591
-Rep3	Channel 4	no_cond1-4_nacl (3) 0.0018305  0.000591
-Rep3	Channel 5	no_cond1-6 (4)      0.0019324  0.000591
-Rep3	Channel 6	cond1 (2)           0.0018989  0.000591
-Rep3	Channel 7	WT (3)              0.0016374  0.000591
-Rep3	Channel 8	no_cond1-4 (3)      0.0023528  0.000591
-Rep4	Channel 1	cond1_nacl (3)      0.0008682  0.000591
-Rep4	Channel 2	WT_nacl (4)         0.0008682  0.000591
-Rep4	Channel 3	no_cond1-4_nacl (4) 0.0010081  0.000591
-Rep4	Channel 4	cond1_nacl (4)      0.0010232  0.000591
-Rep4	Channel 5	WT (4)              0.0013417  0.000591
-Rep4	Channel 6	no_cond1-4 (4)      0.0013368  0.000591
-Rep4	Channel 7	cond1 (3)           0.0017162  0.000591
-Rep4	Channel 8	no_cond1-4 (5)      0.0018093  0.000591
-Rep5	Channel 1	no_cond1-4_nacl (5) 0.0016058  0.000591
-Rep5	Channel 2	cond1 (4)           0.0013253  0.000591
-Rep5	Channel 3	cond1_nacl (5)      0.0010997  0.000591
-Rep5	Channel 4	no_cond1-6 (5)      0.001486   0.000591
-Rep5	Channel 5	WT_nacl (5)         0.00088    0.000591
-Rep5	Channel 6	WT (5)              0.0011167  0.000591
-Rep5	Channel 7	no_cond1-6_nacl (5) 0.001421   0.000591
-Rep5	Channel 8	cond1 (5)           0.0017382  0.000591
+... (full example continues in the application)
 
 ===============================================================================
 CALCULATED METRICS
@@ -13363,17 +15881,18 @@ CONDUCTANCES:
   * Leaf Conductance
   * Overall Conductance
   * Stomatal Sensitivity to VPD (g_s / VPD)
+  * Mass flow corrected conductances
 
 OZONE METRICS:
   * O₃ Uptake Rate
   * Corrected Conductance for O₃
-  * Cumulative O₃ Dose
+  * Cumulative O₃ Dose (POD-like)
   * Ozone Sensitivity Index (OSI)
 
 MESOPHYLL & BIOCHEMISTRY:
   * Mesophyll Conductance (g_m)
   * CO₂ Compensation Point (Γ)
-  * V_cmax Approximation
+  * V_cmax Approximation (simplified Rubisco capacity)
   * Electron Transport Rate (J) - simplified
 
 WATER USE EFFICIENCY:
@@ -13386,7 +15905,7 @@ WATER USE EFFICIENCY:
 ENVIRONMENTAL:
   * Vapor Pressure Deficit (VPD)
   * Relative Humidity
-  * Leaf Temperature
+  * Leaf Temperature (estimated)
   * Saturation Humidity
 
 ===============================================================================
@@ -13396,12 +15915,14 @@ LIGHT-DARK ANALYSIS
 The Light-Dark tab allows you to:
 
   * Manually specify darkness time points (integers only)
-  * Auto-detect darkness periods from absorbed_radiation data
+  * Auto-detect darkness periods from absorbed_radiation data (zero values)
+  * Combine auto-detection with manual entries for precise control
   * Visualize all metrics with yellow (light) and black (dark) rectangles
-  * Export darkness data for further analysis
+  * Export darkness data for further analysis (RE-IMPORT compatible)
 
 For batch processing, darkness periods are auto-detected from radiation data
-and displayed as shaded regions on all plots.
+and displayed as shaded regions on all plots. Channel-specific darkness
+periods are shown with individual black rectangles for each channel.
 
 ===============================================================================
 RED+BLUE LIGHT INTERVALS
@@ -13411,6 +15932,7 @@ The Red+Blue Light tab allows you to:
 
   * Define radiation intervals (format: start-end:value)
   * Apply custom radiation values to specific time ranges
+  * Apply multiple intervals per channel (semicolon-separated)
   * Visualize the effect of light intensity changes on all metrics
   * Export radiation data for further analysis
 
@@ -13422,11 +15944,15 @@ STATISTICAL ANALYSIS
 
 The application includes advanced statistical analysis capabilities:
 
-STANDARD ANALYSES:
+STANDARD ANALYSES (ANOVA):
   * One-Way ANOVA with Tukey HSD post-hoc tests
   * Two-Way ANOVA (Group × Phase)
   * Kruskal-Wallis test with Dunn's post-hoc
   * Welch's ANOVA with Games-Howell post-hoc
+  * Normality checks (Shapiro-Wilk)
+  * Homogeneity of variances (Levene's test)
+  * Effect size calculations (Eta-squared, partial Eta-squared)
+  * Compact letter display for pairwise comparisons
 
 REPEATED MEASURES ANOVA (Light-Dark Experiments):
   * Phase effect (within-subjects)
@@ -13434,6 +15960,7 @@ REPEATED MEASURES ANOVA (Light-Dark Experiments):
   * Group × Phase interaction
   * Sphericity tests (Mauchly's)
   * Greenhouse-Geisser corrections
+  * Automatic fallback to Two-Way ANOVA when insufficient replicates
 
 LINEAR MIXED MODELS (LMM):
   * Random intercept models
@@ -13441,14 +15968,24 @@ LINEAR MIXED MODELS (LMM):
   * Model comparison with Likelihood Ratio Tests
   * AIC/BIC model selection
   * Automatic OLS fallback when models don't converge
+  * Light-dark specific LMM with phase detection
 
-KEY STATISTICAL FEATURES:
-  * Normality checks (Shapiro-Wilk)
-  * Homogeneity of variances (Levene's test)
-  * Effect size calculations (Eta-squared, partial Eta-squared)
-  * Multiple testing corrections (FDR, Bonferroni, Holm)
-  * Compact letter display for pairwise comparisons
-  * Diagnostic plots (Q-Q, residuals, Cook's distance)
+ANCOVA (Analysis of Covariance):
+  * Response variable adjusted for covariate effects
+  * Homogeneity of slopes test
+  * Adjusted means (Least Squares Means)
+  * Post-hoc comparisons on adjusted means
+  * Effect sizes (partial η²)
+  * Context-aware covariate selection (VPD, radiation, temperature)
+  * Scientific recommendations based on gas exchange context
+
+DIAGNOSTIC PLOTS:
+  * Residual vs Fitted plots
+  * Q-Q plots for normality
+  * Scale-Location plots
+  * Residuals by group/time
+  * Cook's Distance for influential points
+  * Effect size visualizations
 
 Results include compact letter displays for easy interpretation of 
 significant differences between groups.
@@ -13486,8 +16023,34 @@ absorbed_radiation data (values near zero). The detection algorithm:
   * Returns full periods (start and end times)
   * Displays all metrics with light/dark shading
   * Provides a summary of all detected periods
+  * Allows manual addition of darkness periods via the Light-Dark tab
 
 This is particularly useful for experiments with automated light-dark cycles.
+
+===============================================================================
+DATA EXPORT
+===============================================================================
+
+The application offers two export modes:
+
+RE-IMPORT COMPATIBLE MODE:
+  * Exports only the original 28 columns from the raw data file
+  * Sorted by continuous time (handles multi-day experiments correctly)
+  * Uses comma as decimal separator (European format)
+  * Tab-separated with .txt extension
+  * Ready for re-import into the analyzer or other software
+
+COMPLETE DATA MODE:
+  * Exports ALL calculated metrics
+  * Includes all derived physiological parameters
+  * Sorted by continuous time and channel
+  * Suitable for detailed analysis in external tools
+
+BATCH RESULTS EXPORT:
+  * Statistics table as Excel file
+  * Averaged plots (mean ± SEM)
+  * WUEi distribution plot
+  * Comprehensive batch report
 
 ===============================================================================
 CITATION
@@ -15817,7 +18380,7 @@ principles and standard gas exchange measurement protocols.
                 channel_text += f" and {len(added_channels) - 3} more"
         
             self.slider_info_label.config(
-                text=f"✓ SELECT ALL: Showing {len(added_channels)} channel{'s' if len(added_channels) > 1 else ''} ({channel_text})",
+                text=f" SELECT ALL: Showing {len(added_channels)} channel{'s' if len(added_channels) > 1 else ''} ({channel_text})",
                 foreground="white",
                 background="green",
                 font=("Arial", 9, "bold")
@@ -15873,7 +18436,7 @@ principles and standard gas exchange measurement protocols.
                 channel_text += f" and {len(removed_channels) - 3} more"
         
             self.slider_info_label.config(
-                text=f"✗ DESELECT ALL: Hiding {len(removed_channels)} channel{'s' if len(removed_channels) > 1 else ''} ({channel_text})",
+                text=f" DESELECT ALL: Hiding {len(removed_channels)} channel{'s' if len(removed_channels) > 1 else ''} ({channel_text})",
                 foreground="white",
                 background="red",
                 font=("Arial", 9, "bold")
@@ -16190,7 +18753,7 @@ principles and standard gas exchange measurement protocols.
         # Clear processing message and show success
         if hasattr(self, 'slider_info_label'):
             self.slider_info_label.config(
-                text="✓ Leaf area updated successfully!", 
+                text=" Leaf area updated successfully!", 
                 foreground="green",
                 background="",
                 font=("Arial", 8)
@@ -16266,7 +18829,7 @@ principles and standard gas exchange measurement protocols.
         # Clear processing message and show success
         if hasattr(self, 'slider_info_label'):
             self.slider_info_label.config(
-                text="✓ Air flow rate updated successfully!", 
+                text=" Air flow rate updated successfully!", 
                 foreground="green",
                 background="",
                 font=("Arial", 8)
@@ -16344,7 +18907,7 @@ principles and standard gas exchange measurement protocols.
         # Clear processing message and show success
         if hasattr(self, 'slider_info_label'):
             self.slider_info_label.config(
-                text="✓ Absorbed radiation updated successfully!", 
+                text=" Absorbed radiation updated successfully!", 
                 foreground="green",
                 background="",
                 font=("Arial", 8)
@@ -16419,7 +18982,7 @@ principles and standard gas exchange measurement protocols.
         # Clear processing message and show success
         if hasattr(self, 'slider_info_label'):
             self.slider_info_label.config(
-                text="✓ Boundary layer conductance updated successfully!", 
+                text=" Boundary layer conductance updated successfully!", 
                 foreground="green",
                 background="",
                 font=("Arial", 8)
@@ -16496,7 +19059,7 @@ principles and standard gas exchange measurement protocols.
         # Clear processing message and show success
         if hasattr(self, 'slider_info_label'):
             self.slider_info_label.config(
-                text="✓ Cuticular conductance updated successfully!", 
+                text=" Cuticular conductance updated successfully!", 
                 foreground="green",
                 background="",
                 font=("Arial", 8)
@@ -16645,13 +19208,13 @@ principles and standard gas exchange measurement protocols.
     
             if manual_entries:
                 self.slider_info_label.config(
-                    text=f"✓ Added manual entries to {manual_count} channels, keeping auto-detected", 
+                    text=f" Added manual entries to {manual_count} channels, keeping auto-detected", 
                     foreground="green",
                     background=""
                 )
             elif auto_count > 0:
                 self.slider_info_label.config(
-                    text=f"✓ Auto-detected {auto_count} channels with zero absorbance", 
+                    text=f" Auto-detected {auto_count} channels with zero absorbance", 
                     foreground="green",
                     background=""
                 )
@@ -16788,7 +19351,7 @@ principles and standard gas exchange measurement protocols.
             if has_entries:
                 total_intervals = sum(len(intervals) for intervals in self.radiation_settings.values())
                 self.slider_info_label.config(
-                    text=f"✓ Radiation intervals applied to {len(self.radiation_settings)} channels ({total_intervals} intervals)", 
+                    text=f" Radiation intervals applied to {len(self.radiation_settings)} channels ({total_intervals} intervals)", 
                     foreground="green",
                     background="",
                     font=("Arial", 8)
