@@ -6,18 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
+matplotlib.rcParams['figure.max_open_warning'] = 0
 matplotlib.use('TkAgg')
 from matplotlib.patches import Rectangle
 import io
 import os
 import sys
-import subprocess
-import json
 from datetime import datetime
-import math
-import openpyxl
-from tkinter import font as tkfont
-import base64
 import re
 from matplotlib.patches import Patch, Rectangle
 from matplotlib.lines import Line2D
@@ -31,13 +26,11 @@ from scipy import stats
 import statsmodels.api as sm
 from statsmodels.formula.api import ols, mixedlm
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from scipy.stats import rankdata
 from scipy.stats import norm
 # Multiple testing correction
 from statsmodels.stats.multitest import multipletests
 from scipy.stats import ttest_ind
 # For compact letter display
-from itertools import combinations
 from scipy.stats import kruskal
 from scipy.stats import t
 from statsmodels.formula.api import mixedlm, ols
@@ -920,25 +913,21 @@ class SplashScreen:
 
 
 def make_channel_plot(df, yvar, title, ylab, palette='tab10', highlight_darkness=False, darkness_periods=None):
-    # Add this debug print
-    print(f"\n--- make_channel_plot called for {yvar} ---")
-    print(f"df is None: {df is None}")
-    if df is not None:
-        print(f"df shape: {df.shape}")
-        print(f"df empty: {df.empty}")
-    print(f"yvar in columns: {yvar in df.columns if df is not None else False}")
-    
     # Close any existing figure to prevent accumulation
     plt.close('all')
     
     if df is None or len(df) == 0 or yvar not in df.columns:
-        print(">>> CONDITION TRIGGERED: Showing 'No data available'")
+        # Silently return an empty plot instead of spamming the console
+        # (Only log at a low priority, or make it conditional on a verbose flag)
+        if getattr(self, 'verbose_debug', False):
+            print(f"[make_channel_plot] No data for '{yvar}' "
+                  f"(df is None: {df is None}, len={len(df) if df is not None else 0}, "
+                  f"column present: {yvar in df.columns if df is not None else False})")
         fig, ax = plt.subplots(figsize=(12, 6))
         ax.text(0.5, 0.5, 'No data available', ha='center', va='center', fontsize=12)
         ax.set_axis_off()
         return fig
         
-    print(">>> CONDITION NOT TRIGGERED: Plotting data")
     if highlight_darkness and darkness_periods:
         return make_light_dark_plot(df, yvar, title, ylab, palette, darkness_periods)
     
@@ -9270,6 +9259,8 @@ class GasExchangeApp:
             data['Channel'] = data['Channel'].str.split('.').str[0]
         
             data['Channel'] = data['Channel'].apply(lambda x: re.sub(r'\D', '', str(x)))
+            data['Channel'] = data['Channel'].replace('', np.nan)
+            data['Channel'] = data['Channel'].dropna().apply(lambda x: str(int(float(x))))
         
             # Extract time information
             time_seconds = []
@@ -11442,6 +11433,12 @@ class GasExchangeApp:
             # Split on comma and take first part, then split on decimal
             data['Channel'] = data['Channel'].str.split(',').str[0]
             data['Channel'] = data['Channel'].str.split('.').str[0]
+            data['Channel'] = data['Channel'].apply(lambda x: re.sub(r'\D', '', str(x)))
+            # Force channel names to clean integer strings ("1", "2", ...) not floats ("1.0")
+            data['Channel'] = data['Channel'].replace('', np.nan)
+            data['Channel'] = data['Channel'].dropna().apply(
+                lambda x: str(int(float(x))) if re.match(r'^\d+(\.\d+)?$', str(x).strip()) else str(x).strip()
+            )
         
             # Extract digits only
             def extract_channel_number(x):
@@ -18472,75 +18469,44 @@ principles and standard gas exchange measurement protocols.
         print("=== DESELECT ALL COMPLETED ===\n")
     
     def get_filtered_data(self, df):
-        """
-        Universal method to filter data based on selected channels
-        Works for both original and renamed channels
-        """
-        print(f"\n--- get_filtered_data called ---")
-        print(f"df shape: {df.shape if df is not None else 'None'}")
-        print(f"self.selected_channels: {self.selected_channels}")
-    
+        # Only log when explicitly debugging
+        log = getattr(self, 'verbose_debug', False)
+
+        if log:
+            print(f"[get_filtered_data] shape={df.shape if df is not None else None}, "
+                  f"selected={self.selected_channels}")
+
         if df is None or len(df) == 0:
-            print("df is None or empty, returning as-is")
             return df
-
-        # If no channels selected, return an empty dataframe with same structure
         if not self.selected_channels:
-            print("NO CHANNELS SELECTED - returning empty dataframe")
-            empty_df = pd.DataFrame(columns=df.columns)
-            print(f"Empty df shape: {empty_df.shape}")
-            return empty_df
+            return pd.DataFrame(columns=df.columns)
 
-        # Ensure Channel column is string
         df['Channel'] = df['Channel'].astype(str).str.strip()
-
-        # Get unique channels in dataframe
         df_channels = set(df['Channel'].unique())
-        print(f"Available channels in df: {df_channels}")
-
-        # Track valid channels to filter
         valid_channels = []
 
         for display_channel in self.selected_channels:
             display_str = str(display_channel).strip()
-            print(f"Checking channel: '{display_str}'")
-    
-            # Direct match
             if display_str in df_channels:
-                print(f"  Direct match found: {display_str}")
                 valid_channels.append(display_str)
                 continue
-    
-            # Check if this is a renamed channel
-            if hasattr(self, 'channel_names') and self.channel_names:
-                # If display_channel is an original name that was renamed
+            if getattr(self, 'channel_names', None):
                 if display_str in self.channel_names:
                     new_name = self.channel_names[display_str].strip()
-                    print(f"  {display_str} was renamed to {new_name}")
                     if new_name in df_channels:
-                        print(f"  Found renamed channel: {new_name}")
                         valid_channels.append(new_name)
                         continue
-            
-                # If display_channel is a new name (renamed channel)
                 for orig_name, new_name in self.channel_names.items():
-                    new_name_clean = new_name.strip()
-                    if display_str == new_name_clean and orig_name in df_channels:
-                        print(f"  Found original name {orig_name} for display name {display_str}")
+                    if display_str == new_name.strip() and orig_name in df_channels:
                         valid_channels.append(orig_name)
                         break
 
-        print(f"Valid channels found: {valid_channels}")
+        if log:
+            print(f"[get_filtered_data] valid={valid_channels}")
 
         if not valid_channels:
-            print("No valid channels found, returning empty dataframe")
             return pd.DataFrame(columns=df.columns)
-
-        # Apply filter
-        filtered_df = df[df['Channel'].isin(valid_channels)]
-        print(f"Filtered df shape: {filtered_df.shape}")
-        print(f"--- get_filtered_data completed ---\n")
-        return filtered_df
+        return df[df['Channel'].isin(valid_channels)]
     
     def get_data_for_plots(self):
         """Get filtered data for plotting - includes time trimming and channel selection"""
@@ -19097,7 +19063,8 @@ principles and standard gas exchange measurement protocols.
             self.root.update()
 
         # Get current data for darkness inputs
-        df = self.get_data_for_plots()
+        df = self.original_calculated_data if self.original_calculated_data is not None \
+            else self.get_data_for_plots()
         if df is None:
             messagebox.showwarning("Warning", "No data available for darkness settings.")
             return
@@ -19543,22 +19510,21 @@ principles and standard gas exchange measurement protocols.
             print(f"Applying darkness settings: {self.darkness_settings}")
             # Apply darkness to the filtered data
             for channel, dark_info in self.darkness_settings.items():
-                print(f"Processing channel {channel} with dark_info: {dark_info}")
-            
-                # Use ALL times (auto + manual combined) for setting absorbed_radiation to 0
-                for time in dark_info['times']:  # Use 'times' which contains combined auto+manual
-                    # Find points at or near the specified darkness time
+                for time in dark_info['times']:
                     mask = (df['Channel'].astype(str) == channel)
-                    if mask.any():
-                        # Find the closest time point
-                        time_diffs = abs(df.loc[mask, 'time_repeated'] - time)
-                        if not time_diffs.empty and time_diffs.min() < 0.01:
-                            closest_idx = time_diffs.idxmin()
-                            old_value = df.loc[closest_idx, 'absorbed_radiation']
-                            df.loc[closest_idx, 'absorbed_radiation'] = 0
-                            print(f"  Set time {time} to 0 (was {old_value})")
-                    else:
-                        print(f"Channel {channel} not found in data")
+                    if not mask.any():
+                        print(f"  [darkness] channel {channel} not found in data")
+                        continue
+
+                    time_diffs = abs(df.loc[mask, 'time_repeated'] - time)
+                    if time_diffs.empty or time_diffs.min() >= 0.01:
+                        continue
+
+                    closest_idx = time_diffs.idxmin()
+                    old_value = df.loc[closest_idx, 'absorbed_radiation']
+                    if old_value != 0:                          # <-- only touch/log when it changes
+                        df.loc[closest_idx, 'absorbed_radiation'] = 0
+                        print(f"  [darkness] ch {channel} t={time}: {old_value} -> 0")
         
             # IMPORTANT: Recalculate metrics with darkness applied
             print(f"Recalculating metrics with darkness applied")
@@ -20304,6 +20270,16 @@ principles and standard gas exchange measurement protocols.
         
         # Update time range info
         self.update_time_range_info()
+        
+        # Summary so the operator can confirm at a glance what was drawn
+        print("\n=== UPDATE ALL PLOTS COMPLETE ===")
+        print(f"Channels selected : {len(self.selected_channels)} "
+              f"({', '.join(self.selected_channels) if len(self.selected_channels) <= 8 else 'many'})")
+        print(f"Rows plotted      : {len(df) if df is not None else 0}")
+        print(f"Palette           : {palette}")
+        print(f"Darkness applied  : {self.darkness_applied}")
+        print(f"Radiation applied : {self.radiation_applied}")
+        print("=================================\n")
     
     def update_main_plots(self, df, palette):
         plot_categories = {
