@@ -14,7 +14,7 @@ import os
 import sys
 from datetime import datetime
 import re
-from matplotlib.patches import Patch, Rectangle
+from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 from PIL import Image, ImageTk
 import traceback
@@ -33,7 +33,6 @@ from scipy.stats import ttest_ind
 # For compact letter display
 from scipy.stats import kruskal
 from scipy.stats import t
-from statsmodels.formula.api import mixedlm, ols
 # ============================================
 # DEPENDENCY CHECK AND INSTALLATION
 # ============================================
@@ -42,7 +41,6 @@ def run_comprehensive_dependency_check():
     """Run complete dependency check and verification"""
     # Import standard library modules that are always available
     import sys
-    import os
     
     print("\n" + "=" * 60)
     print("GAS EXCHANGE ANALYZER - DEPENDENCY CHECK")
@@ -3136,8 +3134,6 @@ class ANOVAAnalyzer:
         Model: Value ~ Channel * Phase + Error(Channel/Phase)
         """
         import numpy as np
-        import matplotlib.pyplot as plt
-        import pandas as pd
     
         if df is None or len(df) == 0:
             return {'error': 'No data provided'}
@@ -3758,7 +3754,6 @@ class ANOVAAnalyzer:
         import matplotlib.pyplot as plt
         import numpy as np
         import scipy.stats as stats
-        from statsmodels.graphics.factorplots import interaction_plot
 
         # ============ CHECK FOR VALID RESULTS ============
         # Check for standard ANOVA results
@@ -4519,7 +4514,6 @@ class LLMAnalyzer:
         }
 
         try:
-            import statsmodels.api as sm
             from statsmodels.formula.api import mixedlm, ols
             from statsmodels.stats.multicomp import pairwise_tukeyhsd
             import scipy.stats as stats
@@ -4810,7 +4804,6 @@ class LLMAnalyzer:
         }
 
         try:
-            import statsmodels.api as sm
             from statsmodels.formula.api import mixedlm, ols
             from statsmodels.stats.multicomp import pairwise_tukeyhsd
             import scipy.stats as stats
@@ -5466,7 +5459,7 @@ class LLMAnalyzer:
         }
     
         import warnings
-        from statsmodels.formula.api import ols, mixedlm
+        from statsmodels.formula.api import ols
         from statsmodels.tools.sm_exceptions import ConvergenceWarning
         import scipy.stats as stats
         import numpy as np
@@ -6926,7 +6919,6 @@ class ANCOVAAnalyzer:
         import matplotlib.pyplot as plt
         import numpy as np
         import scipy.stats as stats
-        from statsmodels.graphics.factorplots import interaction_plot
 
         # ============ CHECK FOR VALID RESULTS ============
         if 'error' in results:
@@ -7017,8 +7009,13 @@ class ANCOVAAnalyzer:
 
         # ============ CREATE FIGURE ============
         fig, axes = plt.subplots(3, 2, figsize=(16, 18))
-        fig.suptitle(f'ANCOVA Diagnostic Plots - {results.get("response_var", "Unknown")}', 
-                     fontsize=16, fontweight='bold')
+        response_display = results.get('response_info', {}).get('display_name', 
+                    results.get('response_var', 'Unknown'))
+        covariate_display = results.get('covariate_info', {}).get('display', 
+                     results.get('covariate_var', 'Unknown'))
+
+        fig.suptitle(f'ANCOVA Diagnostic Plots\n{response_display} adjusted for {covariate_display}', 
+             fontsize=14, fontweight='bold')
 
         # 1. Residuals vs Fitted
         ax1 = axes[0, 0]
@@ -7116,7 +7113,6 @@ class ANCOVAAnalyzer:
                                 pass
         
             if resid_by_group:
-                import matplotlib
                 try:
                     bp = ax4.boxplot(resid_by_group, tick_labels=group_labels, patch_artist=True)
                 except TypeError:
@@ -7657,7 +7653,6 @@ class ANCOVAAnalyzer:
         at the grand mean of the covariate with standard errors
         """
         try:
-            import statsmodels.api as sm
             import numpy as np
             
             # Get the grand mean of the covariate
@@ -7731,7 +7726,6 @@ class ANCOVAAnalyzer:
         """Run post-hoc comparisons on adjusted means"""
         try:
             from statsmodels.stats.multicomp import pairwise_tukeyhsd
-            import numpy as np
             
             # Get fitted values (adjusted means for each observation)
             fitted_values = model.fittedvalues
@@ -11082,7 +11076,7 @@ class GasExchangeApp:
         selected = self.ancova_pair_var.get()
         if not selected or selected == 'Select manually above' or selected == 'No recommended pairs available':
             return
-    
+
         # Parse the selection to get response and covariate
         for pair in self.ancova_analyzer.recommended_pairs:
             display = f"{pair['response_display']} <- {pair['covariate_display']}"
@@ -11092,8 +11086,14 @@ class GasExchangeApp:
                     if config['display_name'] == pair['response_display']:
                         self.ancova_response_var.set(response)
                         break
-            
+        
                 self.ancova_covariate_var.set(pair['covariate'])
+            
+                # Show confirmation in status label
+                self.ancova_status_label.config(
+                    text=f"Selected: {pair['response_display']} adjusted for {pair['covariate_display']}", 
+                    foreground="blue"
+                )
                 break
 
     def on_response_selected(self, *args):
