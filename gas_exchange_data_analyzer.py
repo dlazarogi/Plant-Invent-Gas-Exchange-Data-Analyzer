@@ -10877,6 +10877,7 @@ class GasExchangeApp:
             # Optionally, select the first item by default
             if display_values:
                 self.ancova_pair_combo.current(0)
+                self.ancova_pair_var.set(display_values[0])
                 # This will trigger the on_ancova_pair_selected handler if bound,
                 # but we need to call it manually or let the user select.
                 # The binding is done in setup_ancova_analysis_tab
