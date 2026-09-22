@@ -10859,40 +10859,61 @@ class GasExchangeApp:
         # Store results for potential plotting
         self.current_lmm_comparison = results
     
-    
+    def _populate_ancova_pairs(self):
+        """Populate the recommended ANCOVA pairs dropdown."""
+        if not hasattr(self, 'ancova_analyzer') or not hasattr(self.ancova_analyzer, 'recommended_pairs'):
+            return
+
+        # Get the list of recommended pairs from the analyzer
+        pairs = self.ancova_analyzer.recommended_pairs
+
+        # Format the display strings for the dropdown
+        display_values = [f"{pair['response_display']} <- {pair['covariate_display']}" for pair in pairs]
+
+        # Update the combobox values
+        if hasattr(self, 'ancova_pair_combo'):
+            self.ancova_pair_combo['values'] = display_values
+            
+            # Optionally, select the first item by default
+            if display_values:
+                self.ancova_pair_combo.current(0)
+                # This will trigger the on_ancova_pair_selected handler if bound,
+                # but we need to call it manually or let the user select.
+                # The binding is done in setup_ancova_analysis_tab
+                pass
     def setup_ancova_analysis_tab(self):
         """Setup the ANCOVA analysis tab in the batch results notebook"""
         # Check if ANCOVA tab already exists
         if hasattr(self, 'ancova_tab') and self.ancova_tab.winfo_exists():
             return
-    
+
         # Create the tab
         self.ancova_tab = ttk.Frame(self.batch_results_notebook)
         self.batch_results_notebook.add(self.ancova_tab, text="ANCOVA Analysis")
-    
+
         # Configure the tab to expand
         self.ancova_tab.columnconfigure(0, weight=1)
         self.ancova_tab.rowconfigure(0, weight=1)
-    
+
         # Create main container with scrollbar
         container = ttk.Frame(self.ancova_tab)
         container.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         container.columnconfigure(0, weight=1)
         container.rowconfigure(1, weight=1)  # Results area expands
-    
+
         # ============ CONTROL FRAME ============
         control_frame = ttk.LabelFrame(container, text="ANCOVA Analysis", padding="15")
         control_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
         control_frame.columnconfigure(4, weight=1)  # Push buttons to left
-    
+
         control_frame.configure(padding="15 20 15 15")  # Extra vertical padding
-    
+
         # Row 1: Response Variable
         row_frame = ttk.Frame(control_frame)
         row_frame.grid(row=0, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
-    
+
         ttk.Label(row_frame, text="Response Variable:", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=5)
-    
+
         self.ancova_response_var = tk.StringVar(value='CO2_exchange_rate')
         response_combo, self.ancova_response_groups = create_grouped_metric_combobox(
             row_frame, 
@@ -10900,18 +10921,19 @@ class GasExchangeApp:
             width=30
         )
         response_combo.pack(side=tk.LEFT, padx=5)
-    
+        self.ancova_response_combo = response_combo  # Store reference
+
         # Quick info button for response
         self.response_info_btn = ttk.Button(row_frame, text="ℹ", width=3,
                                             command=self.show_response_info)
         self.response_info_btn.pack(side=tk.LEFT, padx=2)
-    
+
         # Row 2: Covariate
         row_frame2 = ttk.Frame(control_frame)
         row_frame2.grid(row=1, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
-    
+
         ttk.Label(row_frame2, text="Covariate:", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=5)
-    
+
         self.ancova_covariate_var = tk.StringVar(value='absorbed_radiation')
         covariate_combo, self.ancova_covariate_groups = create_grouped_metric_combobox(
             row_frame2, 
@@ -10919,121 +10941,129 @@ class GasExchangeApp:
             width=30
         )
         covariate_combo.pack(side=tk.LEFT, padx=5)
-    
+        self.ancova_covariate_combo = covariate_combo  # Store reference
+
         # Quick info button for covariate
         self.covariate_info_btn = ttk.Button(row_frame2, text="ℹ", width=3,
                                              command=self.show_covariate_info)
         self.covariate_info_btn.pack(side=tk.LEFT, padx=2)
-    
+
         # Row 3: Alpha and Recommended Pairs
         row_frame3 = ttk.Frame(control_frame)
         row_frame3.grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(10, 5))
-    
+
         ttk.Label(row_frame3, text="α:", font=("Arial", 10)).pack(side=tk.LEFT, padx=15)
         self.ancova_alpha_var = tk.StringVar(value='0.05')
         alpha_entry = ttk.Entry(row_frame3, textvariable=self.ancova_alpha_var, width=8)
         alpha_entry.pack(side=tk.LEFT, padx=5)
-    
+
         # Recommended pairs dropdown
         ttk.Label(row_frame3, text=" | Recommended Pairs:", font=("Arial", 10)).pack(side=tk.LEFT, padx=15)
         self.ancova_pair_var = tk.StringVar(value='')
         self.ancova_pair_combo = ttk.Combobox(row_frame3, textvariable=self.ancova_pair_var,
-                                              width=40)
+                                              width=40, state='readonly')
         self.ancova_pair_combo.pack(side=tk.LEFT, padx=5)
-    
+
         # Store reference to ANCOVA analyzer
         self.ancova_analyzer = ANCOVAAnalyzer(self)
-        
+    
         # Populate recommended pairs
         self._populate_ancova_pairs()
         self.ancova_pair_combo.bind('<<ComboboxSelected>>', self.on_ancova_pair_selected)
-        
-        # Bind response selection to update covariate recommendations
-        self.ancova_response_var.trace('w', self.on_response_selected)
     
+        # IMPORTANT: Add trace callbacks to keep everything in sync
+        # When user manually changes response variable
+        self.ancova_response_var.trace('w', self._on_ancova_response_changed)
+        # When user manually changes covariate
+        self.ancova_covariate_var.trace('w', self._on_ancova_covariate_changed)
+
         # Row 4: Run button and status
         row_frame4 = ttk.Frame(control_frame)
         row_frame4.grid(row=3, column=0, columnspan=5, sticky=tk.W, pady=(10, 5))
-    
+
         self.ancova_run_btn = ttk.Button(row_frame4, text="▶ Run ANCOVA Analysis", 
                                          command=self.run_ancova_analysis,
                                          style="Success.TButton")
         self.ancova_run_btn.pack(side=tk.LEFT, padx=5)
-    
+
         self.ancova_status_label = ttk.Label(row_frame4, text="Ready", foreground="blue", font=("Arial", 10))
         self.ancova_status_label.pack(side=tk.LEFT, padx=20)
-    
+
         # Row 5: Info text
         info_label = ttk.Label(control_frame, 
-                              text="Select response and covariate, then click the button to run.",
+                              text="Select response and covariate (manually or via Recommended Pairs), then click the button to run.",
                               font=("Arial", 9), foreground="gray")
         info_label.grid(row=4, column=0, columnspan=5, sticky=tk.W, pady=(5, 5))
-    
+
         # ============ RESULTS DISPLAY ============
         results_container = ttk.Frame(container)
         results_container.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         results_container.columnconfigure(0, weight=1)
         results_container.rowconfigure(0, weight=1)
-    
+
         # Create a canvas with scrollbars for the text widget
         canvas = tk.Canvas(results_container, highlightthickness=0)
         canvas.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-    
+
         # Add vertical scrollbar
         v_scrollbar = ttk.Scrollbar(results_container, orient="vertical", command=canvas.yview)
         v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
-    
+
         # Horizontal scrollbar
         h_scrollbar = ttk.Scrollbar(results_container, orient="horizontal", command=canvas.xview)
         h_scrollbar.grid(row=1, column=0, sticky=(tk.E, tk.W))
-    
+
         # Create a frame inside the canvas for the text widget
         text_frame = ttk.Frame(canvas)
         canvas.create_window((0, 0), window=text_frame, anchor="nw")
-    
+
         # Create the text widget WITHOUT wrap
         self.ancova_results_text = tk.Text(text_frame, wrap=tk.NONE, 
                                            font=("Courier New", 9),
                                            height=50)
-    
+
         # Context menu for copying text
         self.setup_text_copy_menu(self.ancova_results_text)
-        
+    
         # Scrollbars to the text widget
         text_v_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", 
                                          command=self.ancova_results_text.yview)
         text_h_scrollbar = ttk.Scrollbar(text_frame, orient="horizontal", 
                                          command=self.ancova_results_text.xview)
-    
+
         self.ancova_results_text.config(yscrollcommand=text_v_scrollbar.set, 
                                         xscrollcommand=text_h_scrollbar.set)
-    
+
         # Grid layout for text widget and its scrollbars
         self.ancova_results_text.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         text_v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         text_h_scrollbar.grid(row=1, column=0, sticky=(tk.E, tk.W))
-    
+
         # Configure text_frame to expand
         text_frame.columnconfigure(0, weight=1)
         text_frame.rowconfigure(0, weight=1)
-    
+
         # Configure canvas scroll region
         def update_scroll_region(event):
             canvas.configure(scrollregion=canvas.bbox("all"))
             canvas.itemconfig(canvas.find_withtag("all")[0], width=canvas.winfo_width())
-    
+
         text_frame.bind("<Configure>", update_scroll_region)
         canvas.bind("<Configure>", lambda e: update_scroll_region(None))
-    
+
         # Configure the canvas to work with scrollbars
         canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
-    
+
         # Add initial message
         self.ancova_results_text.insert(tk.END, 
             "ANCOVA ANALYSIS\n"
             "================\n\n"
             "Analysis of Covariance (ANCOVA) tests for group differences\n"
             "after controlling for the effect of a continuous covariate.\n\n"
+            "TWO WAYS TO SELECT VARIABLES:\n"
+            "  1. MANUAL: Select Response Variable and Covariate directly\n"
+            "  2. RECOMMENDED PAIRS: Choose a scientifically validated pair\n\n"
+            "Both methods are synchronized - selecting one updates the other.\n\n"
             "COMMON USES IN GAS EXCHANGE EXPERIMENTS:\n"
             "  * Compare photosynthetic rates after accounting for VPD effects\n"
             "  * Compare stomatal conductance after controlling for light intensity\n"
@@ -11042,6 +11072,7 @@ class GasExchangeApp:
             "HOW TO USE:\n"
             "  1. Select a Response variable (e.g., CO2_exchange_rate)\n"
             "  2. Select a Covariate to control for (e.g., VPD)\n"
+            "     OR use Recommended Pairs for validated combinations\n"
             "  3. Click 'Run ANCOVA Analysis'\n\n"
             "The analysis will automatically:\n"
             "  * Test homogeneity of slopes (ANCOVA assumption)\n"
@@ -11052,27 +11083,85 @@ class GasExchangeApp:
         )
         self.ancova_results_text.config(state='disabled')
     
-
-    def _populate_ancova_pairs(self):
-        """Populate the recommended pairs dropdown"""
-        if not hasattr(self, 'ancova_analyzer'):
+    
+    def _on_ancova_response_changed(self, *args):
+        """Called when response variable is manually changed"""
+        if getattr(self, '_updating_ancova_vars', False):
             return
     
-        pairs = self.ancova_analyzer.recommended_pairs
-        if pairs:
-            display_options = []
-            for pair in pairs:
-                display = f"{pair['response_display']} <- {pair['covariate_display']}"
-                display_options.append(display)
-            self.ancova_pair_combo['values'] = display_options
-            self.ancova_pair_combo.set('')
-        else:
-            # Show that no pairs are available but still functional
-            self.ancova_pair_combo['values'] = ['Select manually above']
-            self.ancova_pair_combo.set('Select manually above')
+        response = self.ancova_response_var.get()
+        if not response:
+            return
+    
+        self._updating_ancova_vars = True
+        try:
+            # Update the recommended pairs dropdown to match if possible
+            self._sync_pair_dropdown_from_manual_selection()
+        
+            # Update covariate suggestions based on new response
+            self._update_covariate_recommendations(response)
+        finally:
+            self._updating_ancova_vars = False
 
+    def _on_ancova_covariate_changed(self, *args):
+        """Called when covariate is manually changed"""
+        if getattr(self, '_updating_ancova_vars', False):
+            return
+    
+        covariate = self.ancova_covariate_var.get()
+        if not covariate:
+            return
+    
+        self._updating_ancova_vars = True
+        try:
+            # Update the recommended pairs dropdown to match if possible
+            self._sync_pair_dropdown_from_manual_selection()
+        finally:
+            self._updating_ancova_vars = False
+
+    def _sync_pair_dropdown_from_manual_selection(self):
+        """Sync the Recommended Pairs dropdown to match the current manual selection"""
+        response = self.ancova_response_var.get()
+        covariate = self.ancova_covariate_var.get()
+    
+        if not response or not covariate:
+            return
+    
+        # Find matching pair in the recommended pairs
+        matched_display = None
+        for pair in self.ancova_analyzer.recommended_pairs:
+            if pair['response'] == response and pair['covariate'] == covariate:
+                matched_display = f"{pair['response_display']} <- {pair['covariate_display']}"
+                break
+    
+        # Update the dropdown
+        if matched_display:
+            self.ancova_pair_var.set(matched_display)
+        else:
+            # No matching recommended pair - clear the dropdown
+            self.ancova_pair_var.set('')
+            self.ancova_pair_combo.set('')
+
+    def _update_covariate_recommendations(self, response):
+        """Update the covariate combobox to highlight suitable covariates for the response"""
+        # Get suitable covariates for this response
+        suitable = self.ancova_analyzer.get_suitable_covariates(response)
+    
+        # Update the covariate combobox values to prioritize suitable ones
+        if hasattr(self, 'ancova_covariate_combo'):
+            # We can't easily change the grouped combobox values, but we can
+            # ensure the current covariate is suitable
+            current_cov = self.ancova_covariate_var.get()
+        
+            if suitable and current_cov not in suitable:
+                # Current covariate is not suitable for this response
+                # Set to the default covariate for this response
+                if response in self.ancova_analyzer.configs:
+                    default = self.ancova_analyzer.configs[response].get('default_covariate')
+                    if default and default in suitable:
+                        self.ancova_covariate_var.set(default)
     def on_ancova_pair_selected(self, event=None):
-        """Handle selection of a recommended pair"""
+        """Handle selection of a recommended pair - updates manual selection"""
         selected = self.ancova_pair_var.get()
         if not selected or selected == 'Select manually above' or selected == 'No recommended pairs available':
             return
@@ -11081,19 +11170,24 @@ class GasExchangeApp:
         for pair in self.ancova_analyzer.recommended_pairs:
             display = f"{pair['response_display']} <- {pair['covariate_display']}"
             if display == selected:
-                # Find the actual variable names
-                for response, config in self.ancova_analyzer.configs.items():
-                    if config['display_name'] == pair['response_display']:
-                        self.ancova_response_var.set(response)
-                        break
-        
-                self.ancova_covariate_var.set(pair['covariate'])
+                # Set flag to prevent recursive updates
+                self._updating_ancova_vars = True
+                try:
+                    # Find the actual variable names
+                    for response, config in self.ancova_analyzer.configs.items():
+                        if config['display_name'] == pair['response_display']:
+                            self.ancova_response_var.set(response)
+                            break
             
-                # Show confirmation in status label
-                self.ancova_status_label.config(
-                    text=f"Selected: {pair['response_display']} adjusted for {pair['covariate_display']}", 
-                    foreground="blue"
-                )
+                    self.ancova_covariate_var.set(pair['covariate'])
+            
+                    # Show confirmation in status label
+                    self.ancova_status_label.config(
+                        text=f"Selected: {pair['response_display']} adjusted for {pair['covariate_display']}", 
+                        foreground="blue"
+                    )
+                finally:
+                    self._updating_ancova_vars = False
                 break
 
     def on_response_selected(self, *args):
